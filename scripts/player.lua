@@ -5,10 +5,9 @@ local status = {
     idleimg = "images/ball.png"
 }
 
-local coords = {
+player.coords = {
     x = 0,
     y = 0,
-    speed = 1
 }
 
 local function movimento()
@@ -36,37 +35,27 @@ local function movimento()
     end
 
     -- depois é so aplicar com a velocidade propria
-    coords.x = coords.x + coords.speed * d.x
-    coords.y = coords.y + coords.speed * d.y
+    coords.x = coords.x + status.speed * d.x
+    coords.y = coords.y + status.speed * d.y
 
-    print(coords.x)
-end
-
-local function mouse()
-    local dt = love.timer.getDelta()
-
-    local mouse = {
-        x = love.mouse.getX(),
-        y = love.mouse.getY()
-    }
-
-    if love.mouse.isDown(1) then
-        coords.x = mouse.x
-        coords.y = mouse.y
-    end
-    print("Mouse X: " ..mouse.x)
-    print("Mouse Y: " ..mouse.y)
 end
 
 function player.update()
     Character = love.graphics.newImage(status.idleimg)
-    love.graphics.draw(Character, coords.x, coords.y)
+
+    local pl_x = "Player X: " ..coords.x
+    local pl_y = "Player Y: " ..coords.y
+
+    love.graphics.draw(Character, coords.x, coords.y, 0, 1, 1, Character:getWidth()/2, Character:getHeight()/2)
+
+    love.graphics.print(pl_x, 400, 15)
+    love.graphics.print(pl_y, 580, 15)
 end
+
 
 
 function player.basic_moviment()
     movimento()
-    mouse()
 end
 
 
