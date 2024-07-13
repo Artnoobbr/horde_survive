@@ -9,16 +9,23 @@ local pistol = require("pistol")
 package.path = "./scripts/guns.lua"
 local guns = require("guns")
 
+package.path = "./scripts/map/map.lua"
+local map = require("map")
+
 function love.update(dt)
-    player.basic_moviment()
+  player.basic_moviment()
 end
 
---function love.load()
-  --  Dt = love.timer.getDelta()
---end
+function love.load()
+  map.update()
+end
 
 function love.draw()
-    player.update()
-    pistol.update()
-    guns.bulletdraw()
+  --map should be the first always
+  map.drawmap()
+
+  player.update()
+  pistol.update()  
+  guns.bulletupdate()
+
 end
