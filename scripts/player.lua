@@ -2,7 +2,7 @@ local player = {}
 
 local status = {
     speed = 1,
-    idleimg = "images/ball.png"
+    Character = love.graphics.newImage("images/characters/robert.png")
 }
 
 player.coords = {
@@ -40,17 +40,22 @@ local function movimento()
 
 end
 
-function player.update()
-    Character = love.graphics.newImage(status.idleimg)
+local function collision()
+    love.graphics.rectangle("line", coords.x-status.Character:getWidth()/2, coords.y-status.Character:getHeight()/2, status.Character:getHeight(), status.Character:getWidth())
+end
 
+function player.update()
     local pl_x = "Player X: " ..coords.x
     local pl_y = "Player Y: " ..coords.y
 
-    love.graphics.draw(Character, coords.x, coords.y, 0, 1, 1, Character:getWidth()/2, Character:getHeight()/2)
+    love.graphics.draw(status.Character, coords.x, coords.y, 0, 1, 1, status.Character:getWidth()/2, status.Character:getHeight()/2)
 
     love.graphics.print(pl_x, 400, 15)
     love.graphics.print(pl_y, 580, 15)
+    collision()
 end
+
+
 
 
 

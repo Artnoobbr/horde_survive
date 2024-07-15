@@ -38,15 +38,16 @@ end
 -- TODO: Aprender metatables do lua
 
 function guns.bullet_create(gun_x, gun_y, sprite, rotation)
-    local info = {
-        sprite = love.graphics.newImage(sprite),
-        x = gun_x,
-        y = gun_y,
-        speed = 250,
-        timer = 300,
-        rotation = rotation
-    }
+    local info = {}
+    info.sprite = love.graphics.newImage(sprite)
+    info.x = gun_x
+    info.y = gun_y
+    info.speed = 250
+    info.timer = 300
+    info.rotation = rotation
+
     table.insert(bullets, info)
+
 end
 
 function guns.bulletupdate()
@@ -54,6 +55,15 @@ function guns.bulletupdate()
     
     for i, x in pairs(bullets) do
 
+        love.graphics.push()
+        love.graphics.rotate(bullets[i].rotation)
+        love.graphics.setColor(255,0,0)
+        love.graphics.rectangle("line", bullets[i].x-bullets[i].sprite:getWidth()/2, bullets[i].y-bullets[i].sprite:getHeight()/2, bullets[i].sprite:getWidth()-2, bullets[i].sprite:getHeight())
+        love.graphics.rotate(0)
+        love.graphics.setColor(255,255,255)
+        love.graphics.pop()
+
+        
         love.graphics.draw(bullets[i].sprite, bullets[i].x, bullets[i].y, bullets[i].rotation, 1, 1, bullets[i].sprite:getWidth()/2,  bullets[i].sprite:getHeight()/2)
 
         local d = {x = 0, y = 0}

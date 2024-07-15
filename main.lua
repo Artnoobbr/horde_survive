@@ -12,12 +12,19 @@ local guns = require("guns")
 package.path = "./scripts/map/map.lua"
 local map = require("map")
 
+package.path = "./scripts/enemy/dummy.lua"
+local dummy = require("dummy")
+
+package.path = "./scripts/collision/collision.lua"
+local collision = require("collision")
+
 function love.update(dt)
   player.basic_moviment()
 end
 
 function love.load()
   map.update()
+  dummy.create(600, 380)
 end
 
 function love.draw()
@@ -27,5 +34,10 @@ function love.draw()
   player.update()
   pistol.update()  
   guns.bulletupdate()
+
+  dummy.load()
+  collision.update()
+
+  
 
 end
