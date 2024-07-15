@@ -2,6 +2,9 @@ local guns = {}
 
 local bullets = {}
 
+package.path = "./scripts/collision/collision.lua"
+local collision = require("collision")
+
 local function tablelength(T)
     local count = 0
     for _ in pairs(T) do count = count + 1 end
@@ -43,8 +46,11 @@ function guns.bullet_create(gun_x, gun_y, sprite, rotation)
     info.x = gun_x
     info.y = gun_y
     info.speed = 250
-    info.timer = 300
+    info.timer = 200
     info.rotation = rotation
+    info.selfdestruct = function ()
+        info.sprite = nil
+    end
 
     table.insert(bullets, info)
 
@@ -55,32 +61,40 @@ function guns.bulletupdate()
     
     for i, x in pairs(bullets) do
 
+        --Gambiarra, enquanto eu não achar a forma de rotacionar o retangulo que fique na posição
+        --Da bala, eu vou deixar assim mesmo
+
+        -- Informações da caixa de colisão
+
+        local rx = (bullets[i].x+7)-bullets[i].sprite:getWidth()/2
+        local ry = bullets[i].y-bullets[i].sprite:getHeight()/2
+        local rw = bullets[i].sprite:getWidth()-15
+        local rh = bullets[i].sprite:getHeight()
+
         love.graphics.push()
-        love.graphics.rotate(bullets[i].rotation)
         love.graphics.setColor(255,0,0)
-        love.graphics.rectangle("line", bullets[i].x-bullets[i].sprite:getWidth()/2, bullets[i].y-bullets[i].sprite:getHeight()/2, bullets[i].sprite:getWidth()-2, bullets[i].sprite:getHeight())
-        love.graphics.rotate(0)
+        love.graphics.rectangle("line", rx, ry, rw, rh)
         love.graphics.setColor(255,255,255)
         love.graphics.pop()
 
         
         love.graphics.draw(bullets[i].sprite, bullets[i].x, bullets[i].y, bullets[i].rotation, 1, 1, bullets[i].sprite:getWidth()/2,  bullets[i].sprite:getHeight()/2)
 
-        local d = {x = 0, y = 0}
-
-        if bullets[i].timer > 0 then
+        if bullets[i].timer > 0 and collision.check(rx,ry, rw, rh, "dummy") == false then
             bullets[i].timer = bullets[i].timer - 1
             local direction = directionrotation(bullets[i].rotation, bullets[i].speed)
 
             bullets[i].x = bullets[i].x + direction.x * dt
             bullets[i].y = bullets[i].y + direction.y * dt
-            
-
         else
-            bullets[i].sprite = nil
+            if bullets[i].timer == 0 then
+                print("Times over")
+            end
+            bullets[i].selfdestruct()
             table.remove(bullets, i)
             collectgarbage()
         end
+
     end
     love.graphics.print("Balas: "..tablelength(bullets), 400, 65)
 end
