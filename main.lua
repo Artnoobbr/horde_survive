@@ -22,9 +22,12 @@ function love.update(dt)
   player.basic_moviment()
 end
 
+
+dummy.create(600, 380)
+
 function love.load()
   map.update()
-  dummy.create(600, 380)
+  
 end
 
 function love.draw()
@@ -37,7 +40,4 @@ function love.draw()
 
   dummy.load()
   collision.update()
-
-  
-
 end

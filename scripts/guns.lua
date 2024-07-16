@@ -4,12 +4,10 @@ local bullets = {}
 
 package.path = "./scripts/collision/collision.lua"
 local collision = require("collision")
+local collisions = collision.collisions
 
-local function tablelength(T)
-    local count = 0
-    for _ in pairs(T) do count = count + 1 end
-    return count
-end
+package.path = "./scripts/tools/tools.lua"
+local tools = require("tools")
 
 
 local function directionrotation(rotation, speed)
@@ -45,12 +43,22 @@ function guns.bullet_create(gun_x, gun_y, sprite, rotation)
     info.sprite = love.graphics.newImage(sprite)
     info.x = gun_x
     info.y = gun_y
+    info.name = "bol"
     info.speed = 250
     info.timer = 200
     info.rotation = rotation
+    info.hit = false
     info.selfdestruct = function ()
         info.sprite = nil
     end
+
+    info.rx = info.x-info.sprite:getWidth()/2
+    info.ry = info.y-info.sprite:getHeight()/2
+    info.rw = info.sprite:getWidth()-15
+    info.rh = info.sprite:getHeight()
+    info.id = tools.uuid()
+
+    collision.create(info.rx, info.ry, info.rh, info.rw, 255, 0 ,0, info.name,  info.id)
 
     table.insert(bullets, info)
 
@@ -65,22 +73,18 @@ function guns.bulletupdate()
         --Da bala, eu vou deixar assim mesmo
 
         -- Informações da caixa de colisão
-
-        local rx = (bullets[i].x+7)-bullets[i].sprite:getWidth()/2
-        local ry = bullets[i].y-bullets[i].sprite:getHeight()/2
-        local rw = bullets[i].sprite:getWidth()-15
-        local rh = bullets[i].sprite:getHeight()
-
-        love.graphics.push()
-        love.graphics.setColor(255,0,0)
-        love.graphics.rectangle("line", rx, ry, rw, rh)
-        love.graphics.setColor(255,255,255)
-        love.graphics.pop()
+        for v in pairs(collisions) do
+            if collisions[v].id == bullets[i].id then
+                collisions[v].xbox = (bullets[i].x+7)-bullets[i].sprite:getWidth()/2
+                collisions[v].ybox = bullets[i].y-bullets[i].sprite:getHeight()/2
+                Collisions_id = v
+            end
+        end
 
         
         love.graphics.draw(bullets[i].sprite, bullets[i].x, bullets[i].y, bullets[i].rotation, 1, 1, bullets[i].sprite:getWidth()/2,  bullets[i].sprite:getHeight()/2)
 
-        if bullets[i].timer > 0 and collision.check(rx,ry, rw, rh, "dummy") == false then
+        if bullets[i].timer > 0  then
             bullets[i].timer = bullets[i].timer - 1
             local direction = directionrotation(bullets[i].rotation, bullets[i].speed)
 
@@ -92,11 +96,13 @@ function guns.bulletupdate()
             end
             bullets[i].selfdestruct()
             table.remove(bullets, i)
+            table.remove(collisions, Collisions_id)
             collectgarbage()
         end
 
     end
-    love.graphics.print("Balas: "..tablelength(bullets), 400, 65)
+    love.graphics.print("Balas: "..tools.tablelength(bullets), 400, 65)
+    love.graphics.print("Colisões: "..tools.tablelength(collisions), 400, 75)
 end
 
 
