@@ -24,6 +24,7 @@ end
 
 
 dummy.create(600, 380)
+dummy.create(600, 500)
 
 function love.load()
   map.update()

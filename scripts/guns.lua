@@ -43,22 +43,22 @@ function guns.bullet_create(gun_x, gun_y, sprite, rotation)
     info.sprite = love.graphics.newImage(sprite)
     info.x = gun_x
     info.y = gun_y
-    info.name = "bol"
+    info.name = "bullet"
     info.speed = 250
     info.timer = 200
     info.rotation = rotation
-    info.hit = false
     info.selfdestruct = function ()
         info.sprite = nil
     end
 
+    -- maybe remove this, because is not necessary in the table
     info.rx = info.x-info.sprite:getWidth()/2
     info.ry = info.y-info.sprite:getHeight()/2
     info.rw = info.sprite:getWidth()-15
     info.rh = info.sprite:getHeight()
     info.id = tools.uuid()
 
-    collision.create(info.rx, info.ry, info.rh, info.rw, 255, 0 ,0, info.name,  info.id)
+    collision.create(info.rx, info.ry, info.rh, info.rw, 255, 0 ,0, info.name, info.id, true)
 
     table.insert(bullets, info)
 
@@ -77,14 +77,14 @@ function guns.bulletupdate()
             if collisions[v].id == bullets[i].id then
                 collisions[v].xbox = (bullets[i].x+7)-bullets[i].sprite:getWidth()/2
                 collisions[v].ybox = bullets[i].y-bullets[i].sprite:getHeight()/2
-                Collisions_id = v
+                Co_id = v
             end
         end
 
         
         love.graphics.draw(bullets[i].sprite, bullets[i].x, bullets[i].y, bullets[i].rotation, 1, 1, bullets[i].sprite:getWidth()/2,  bullets[i].sprite:getHeight()/2)
 
-        if bullets[i].timer > 0  then
+        if bullets[i].timer > 0 and collisions[Co_id].hit == false then
             bullets[i].timer = bullets[i].timer - 1
             local direction = directionrotation(bullets[i].rotation, bullets[i].speed)
 
@@ -96,7 +96,7 @@ function guns.bulletupdate()
             end
             bullets[i].selfdestruct()
             table.remove(bullets, i)
-            table.remove(collisions, Collisions_id)
+            table.remove(collisions, Co_id)
             collectgarbage()
         end
 

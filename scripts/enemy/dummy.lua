@@ -35,7 +35,7 @@ function dummy.create (x, y)
     end
 
     --collision.create(dummys[i].x+1, dummys[i].y, dummys[i].sprite:getHeight()-5, dummys[i].sprite:getWidth()-15, 0, 255, 0, "dummy", 12323)
-    collision.create(info.rx, info.ry,  info.rh, info.rw, 0, 255, 0, "dummy", info.id)
+    collision.create(info.rx, info.ry,  info.rh, info.rw, 0, 255, 0, "dummy", info.id, false)
     
     table.insert(dummys, info)
 end
@@ -49,12 +49,7 @@ function dummy.load()
             if collisions[v].id == dummys[i].id then
                 collisions[v].xbox = dummys[i].x-dummys[i].sprite:getWidth()/2
                 collisions[v].ybox = dummys[i].y-dummys[i].sprite:getHeight()/2
-                Collisions_id = v
-                
-                if collision.check(collisions[v].xbox, collisions[v].ybox, collisions[v].wbox, collisions[v].hbox, "bol") == true then
-                    dummys[i].health = dummys[i].health - 1
-                end
-            
+                Co_id = v
             end
         end
 
@@ -62,10 +57,14 @@ function dummy.load()
             love.graphics.draw(dummys[i].sprite, dummys[i].x, dummys[i].y, dummys[i].rotation, 1, 1, dummys[i].sprite:getWidth()/2,  dummys[i].sprite:getHeight()/2)
             
             love.graphics.print(dummys[i].health, dummys[i].x-3, dummys[i].y-30)
+
+            if collision.check(collisions[Co_id].xbox, collisions[Co_id].ybox, collisions[Co_id].wbox, collisions[Co_id].hbox, "bullet") then
+                dummys[i].health = dummys[i].health - 1
+            end
         else
             dummys[i].selfdestruct()
             table.remove(dummys, i)
-            table.remove(collisions, Collisions_id)
+            table.remove(collisions, Co_id)
         end
         
 
