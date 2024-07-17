@@ -10,6 +10,13 @@ player.coords = {
     y = 0,
 }
 
+package.path = "./scripts/collision/collision.lua"
+local collision = require("collision")
+local collisions = collision.collisions
+
+
+collision.create(player.coords.x, player.coords.y, status.Character:getHeight(), status.Character:getWidth(), 124, 23, 23, "player", "player", false)
+
 local function movimento()
     -- Parte do Movimento
     -- Temos um problema para resolver que é o player andando mais rapido na diagonal
@@ -40,9 +47,7 @@ local function movimento()
 
 end
 
-local function collision()
-    love.graphics.rectangle("line", coords.x-status.Character:getWidth()/2, coords.y-status.Character:getHeight()/2, status.Character:getHeight(), status.Character:getWidth())
-end
+
 
 function player.update()
     local pl_x = "Player X: " ..coords.x
@@ -52,7 +57,14 @@ function player.update()
 
     love.graphics.print(pl_x, 400, 15)
     love.graphics.print(pl_y, 580, 15)
-    collision()
+
+    for i in pairs(collisions) do
+        if collisions[i].id == "player" then
+            print("found")
+            collisions[i].xbox = player.coords.x
+            collisions[i].ybox = player.coords.y
+        end
+    end
 end
 
 
