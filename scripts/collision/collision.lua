@@ -1,12 +1,19 @@
 local collision = {}
 
-collision.collisions = {}
+collision.collisions = {
+    player = {},
+    paredes = {},
+    dummys = {},
+    bullets = {},
+}
 
 package.path = "./scripts/tools/tools.lua"
 local tools = require("tools")
 
 
-function collision.create(x, y, height, width, r,g,b ,name, id, destroy)
+
+
+function collision.create(x, y, height, width, r,g,b ,name, id, destroy, place)
     local info = {}
     info.x = x
     info.y = y
@@ -23,45 +30,54 @@ function collision.create(x, y, height, width, r,g,b ,name, id, destroy)
         info.hit = false
     end
 
-
     info.xbox = info.x-info.width/2
     info.ybox = info.y-info.height/2
     info.wbox = info.width-2
     info.hbox = info.height
-    
-    table.insert(collision.collisions, info)
+
+
+    table.insert(place, info)
+   
 end
 
 function collision.update()
     for i in pairs(collision.collisions) do
-        local collisions = collision.collisions
-        love.graphics.setColor(collisions[i].r, collisions[i].g, collisions[i].b)
-        love.graphics.rectangle("line", collisions[i].xbox, collisions[i].ybox, collisions[i].wbox, collisions[i].hbox)
-        love.graphics.setColor(255,255,255)
+        for x in pairs(collision.collisions[i]) do
+            love.graphics.setColor(collision.collisions[i][x].r, collision.collisions[i][x].g, collision.collisions[i][x].b)
+            love.graphics.rectangle("line", collision.collisions[i][x].xbox, collision.collisions[i][x].ybox, collision.collisions[i][x].wbox, collision.collisions[i][x].hbox)
+            love.graphics.setColor(255,255,255)
+        end
     end
 end
 
-function collision.check(x1, y1, w1, h1, name2)
+function collision.check(x1, y1, w1, h1, place)
     
-    for i in pairs(collision.collisions) do
-        
-        local collisions = collision.collisions
-        local x2 = collisions[i].xbox
-        local y2 = collisions[i].ybox
-        local w2 = collisions[i].wbox
-        local h2 = collisions[i].hbox
+    for i in pairs(place) do
+        local x2 = place[i].xbox
+        local y2 = place[i].ybox
+        local w2 = place[i].wbox
+        local h2 = place[i].hbox
 
         if x1 + w1 >= x2 and x1 <= x2 + w2 and y1 + h1 >= y2 and y1 <= y2 + h2 and x1 ~= x2 then
-            if collisions[i].name == name2 then
-                print(name2.." Collision detected!")
-                if collisions[i].hit ~= nil then
-                    collisions[i].hit = true
+            print("Collision detected!")
+            if place[i].hit ~= nil then
+                place[i].hit = true
                 end
-                return true
-            else
-                print("Collision detected")
-            end
-            
+            return true
+        end
+    end
+    return false
+end
+
+function collision.ponto_retangulo(px, py, place)
+    for i in pairs(place) do
+        local rx = place[i].xbox
+        local ry = place[i].ybox
+        local rw = place[i].wbox
+        local rh = place[i].hbox
+
+        if px >= rx and px <= rx + rw and py >= ry and py <= ry + rh then
+            return true
         end
     end
     return false

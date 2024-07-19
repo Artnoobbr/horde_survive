@@ -58,7 +58,7 @@ function guns.bullet_create(gun_x, gun_y, sprite, rotation)
     info.rh = info.sprite:getHeight()
     info.id = tools.uuid()
 
-    collision.create(info.rx, info.ry, info.rh, info.rw, 255, 0 ,0, info.name, info.id, true)
+    collision.create(info.rx, info.ry, info.rh, info.rw, 255, 0 ,0, info.name, info.id, true, collision.collisions.bullets)
 
     table.insert(bullets, info)
 
@@ -73,10 +73,10 @@ function guns.bulletupdate()
         --Da bala, eu vou deixar assim mesmo
 
         -- Informações da caixa de colisão
-        for v in pairs(collisions) do
-            if collisions[v].id == bullets[i].id then
-                collisions[v].xbox = (bullets[i].x+7)-bullets[i].sprite:getWidth()/2
-                collisions[v].ybox = bullets[i].y-bullets[i].sprite:getHeight()/2
+        for v in pairs(collisions.bullets) do
+            if collisions.bullets[v].id == bullets[i].id then
+                collisions.bullets[v].xbox = (bullets[i].x+7)-bullets[i].sprite:getWidth()/2
+                collisions.bullets[v].ybox = bullets[i].y-bullets[i].sprite:getHeight()/2
                 Co_id = v
             end
         end
@@ -84,7 +84,7 @@ function guns.bulletupdate()
         
         love.graphics.draw(bullets[i].sprite, bullets[i].x, bullets[i].y, bullets[i].rotation, 1, 1, bullets[i].sprite:getWidth()/2,  bullets[i].sprite:getHeight()/2)
 
-        if bullets[i].timer > 0 and collisions[Co_id].hit == false then
+        if bullets[i].timer > 0 and collisions.bullets[Co_id].hit == false then
             bullets[i].timer = bullets[i].timer - 1
             local direction = directionrotation(bullets[i].rotation, bullets[i].speed)
 
@@ -96,13 +96,13 @@ function guns.bulletupdate()
             end
             bullets[i].selfdestruct()
             table.remove(bullets, i)
-            table.remove(collisions, Co_id)
+            table.remove(collisions.bullets, Co_id)
             collectgarbage()
         end
 
     end
     love.graphics.print("Balas: "..tools.tablelength(bullets), 400, 65)
-    love.graphics.print("Colisões: "..tools.tablelength(collisions), 400, 75)
+    love.graphics.print("Colisões de bala: "..tools.tablelength(collisions.bullets), 400, 80)
 end
 
 

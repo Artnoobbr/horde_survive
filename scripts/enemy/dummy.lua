@@ -1,7 +1,6 @@
 local dummy = {}
 
 local dummys = {}
-local limit = 1
 
 package.path = "./scripts/collision/collision.lua"
 local collision = require("collision")
@@ -35,7 +34,7 @@ function dummy.create (x, y)
     end
 
     --collision.create(dummys[i].x+1, dummys[i].y, dummys[i].sprite:getHeight()-5, dummys[i].sprite:getWidth()-15, 0, 255, 0, "dummy", 12323)
-    collision.create(info.rx, info.ry,  info.rh, info.rw, 0, 255, 0, "dummy", info.id, false)
+    collision.create(info.rx, info.ry,  info.rh, info.rw, 0, 255, 0, "dummy", info.id, false, collision.collisions.dummys)
     
     table.insert(dummys, info)
 end
@@ -44,11 +43,11 @@ end
 function dummy.load()
     for i in pairs(dummys) do
 
-        for v in pairs(collisions) do
+        for v in pairs(collisions.dummys) do
 
-            if collisions[v].id == dummys[i].id then
-                collisions[v].xbox = dummys[i].x-dummys[i].sprite:getWidth()/2
-                collisions[v].ybox = dummys[i].y-dummys[i].sprite:getHeight()/2
+            if collisions.dummys[v].id == dummys[i].id then
+                collisions.dummys[v].xbox = dummys[i].x-dummys[i].sprite:getWidth()/2
+                collisions.dummys[v].ybox = dummys[i].y-dummys[i].sprite:getHeight()/2
                 Co_id = v
             end
         end
@@ -58,13 +57,13 @@ function dummy.load()
             
             love.graphics.print(dummys[i].health, dummys[i].x-3, dummys[i].y-30)
 
-            if collision.check(collisions[Co_id].xbox, collisions[Co_id].ybox, collisions[Co_id].wbox, collisions[Co_id].hbox, "bullet") then
+            if collision.check(collisions.dummys[Co_id].xbox, collisions.dummys[Co_id].ybox, collisions.dummys[Co_id].wbox, collisions.dummys[Co_id].hbox, collision.collisions.bullets) then
                 dummys[i].health = dummys[i].health - 1
             end
         else
             dummys[i].selfdestruct()
             table.remove(dummys, i)
-            table.remove(collisions, Co_id)
+            table.remove(collisions.dummys, Co_id)
         end
         
 
