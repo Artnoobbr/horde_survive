@@ -18,7 +18,18 @@ function map.update()
             collision.create(obj.x+obj.width/2+1, obj.y+obj.height/2, obj.height, obj.width, 0, 255, 0, "parede", math.random(), false, collision.collisions.paredes)
         end
     end
+
+
     
+end
+
+function map.test()
+    for i in pairs(collision.collisions.paredes) do
+        local col = collision.collisions.paredes[i]
+        if collision.check(col.xbox, col.ybox, col.wbox, col.hbox, collision.collisions.bullets) then
+            print("Bala colidiu com a parede")
+        end
+    end
 end
 
 function map.drawmap()

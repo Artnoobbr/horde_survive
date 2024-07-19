@@ -34,6 +34,7 @@ end
 function love.draw()
   --map should be the first always
   map.drawmap()
+  map.test()
 
   player.update()
   pistol.update()  
