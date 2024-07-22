@@ -15,12 +15,9 @@ function map.update()
 
     if DebugMap.layers["paredes"] then
         for i, obj in pairs(DebugMap.layers["paredes"].objects) do
-            collision.create(obj.x+obj.width/2+1, obj.y+obj.height/2, obj.height, obj.width, 0, 255, 0, "parede", math.random(), false, collision.collisions.paredes)
+            collision.create(obj.x+obj.width/2+1, obj.y+obj.height/2, obj.height, obj.width, 0, 0, 255, "parede", math.random(), false, collision.collisions.paredes)
         end
-    end
-
-
-    
+    end    
 end
 
 function map.test()

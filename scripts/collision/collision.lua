@@ -11,8 +11,6 @@ package.path = "./scripts/tools/tools.lua"
 local tools = require("tools")
 
 
-
-
 function collision.create(x, y, height, width, r,g,b ,name, id, destroy, place)
     local info = {}
     info.x = x

@@ -9,7 +9,6 @@ local collisions = collision.collisions
 package.path = "./scripts/tools/tools.lua"
 local tools = require("tools")
 
-
 local function directionrotation(rotation, speed)
     --cos(degrees*pi/180)*distance - this will convert degrees to change of x
     --sin(degrees*pi/180)*distance - this will convert degrees to change of y
@@ -38,7 +37,7 @@ end
 
 -- TODO: Aprender metatables do lua
 
-function guns.bullet_create(gun_x, gun_y, sprite, rotation)
+function guns.bullet_create(gun_x, gun_y, sprite, rotation, damage)
     local info = {}
     info.sprite = love.graphics.newImage(sprite)
     info.x = gun_x

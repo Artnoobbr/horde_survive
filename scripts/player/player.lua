@@ -1,13 +1,24 @@
 local player = {}
 
+package.path = "./scripts/collision/collision.lua"
+local collision = require("collision")
+local collisions = collision.collisions
+
+local width, height = love.graphics.getDimensions()
+
 local status = {
     speed = 1,
     Character = love.graphics.newImage("images/characters/robert.png")
 }
 
 player.coords = {
-    x = 0,
-    y = 0,
+    x = width/2,
+    y = height/2,
+}
+
+player.guns = {
+    pistol = false,
+    submachinegun = false
 }
 
 -- Gambiarra também, provavelmente tem um método melhor
@@ -16,10 +27,6 @@ local line_coords = {
     line2 = {x2 = 0, y2 = 0, fx = 5, fy = 25},
     line3 = {x2 = 0, y2 = 0, fx = 25, fy = 5}
 }
-
-package.path = "./scripts/collision/collision.lua"
-local collision = require("collision")
-local collisions = collision.collisions
 
 local esq = false
 local dir = false
