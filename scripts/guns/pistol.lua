@@ -22,6 +22,7 @@ local stats = {
     offsetY = 3,
     idle = love.graphics.newImage("images/guns/pistol/gun.png"),
     bullet = "images/guns/pistol/bullet.png",
+    damage = 1
 }
 
 -- TODO: Arrumar o problema da posição da arma
@@ -36,7 +37,7 @@ function pistol.update()
         function love.mousepressed(x, y, button, istouch)
             if button == 1 and timer <= 0 then
                 shoot:play()
-                guns.bullet_create(coords.x + 25, coords.y, stats.bullet, guns.rotacionar(coords.x, coords.y))
+                guns.bullet_create(coords.x + 25, coords.y, stats.bullet, guns.rotacionar(coords.x, coords.y), 1)
                 timer = 5
             end
         end

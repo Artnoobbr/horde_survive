@@ -9,6 +9,9 @@ local collisions = collision.collisions
 package.path = "./scripts/tools/tools.lua"
 local tools = require("tools")
 
+package.path = "./scripts/player/player.lua"
+local player = require("player")
+
 local function directionrotation(rotation, speed)
     --cos(degrees*pi/180)*distance - this will convert degrees to change of x
     --sin(degrees*pi/180)*distance - this will convert degrees to change of y
@@ -25,14 +28,18 @@ local function directionrotation(rotation, speed)
 
 end
 
-function guns.rotacionar(gun_x, gun_y)
+function guns.rotacionar(gun_x, gun_y, playerS)
     -- Primeiro preciso pegar posição do mouse e da arma e subitrair os dois
-    local mouseX = love.mouse.getX(); local mouseY = love.mouse.getY()
-
-    local angulo = math.atan2(mouseY-gun_y, mouseX-gun_x)
-    love.graphics.print("Angulo: "..angulo, 400, 30)
-
-    return angulo
+    if playerS == nil or false then
+        local mouseX = love.mouse.getX(); local mouseY = love.mouse.getY()
+        local angulo = math.atan2(mouseY-gun_y, mouseX-gun_x)
+        return angulo
+    elseif playerS == true then
+        local playerX = player.coords.x ; local playerY = player.coords.y
+        local angulo = math.atan2(playerY-gun_y, playerX-gun_x)
+        love.graphics.print("Angulo: "..angulo, 400, 30)
+        return angulo
+    end
 end
 
 -- TODO: Aprender metatables do lua
@@ -50,6 +57,8 @@ function guns.bullet_create(gun_x, gun_y, sprite, rotation, damage)
         info.sprite = nil
     end
 
+    info.damage = damage
+
     -- maybe remove this, because is not necessary in the table
     info.rx = info.x-info.sprite:getWidth()/2
     info.ry = info.y-info.sprite:getHeight()/2
@@ -57,7 +66,7 @@ function guns.bullet_create(gun_x, gun_y, sprite, rotation, damage)
     info.rh = info.sprite:getHeight()
     info.id = tools.uuid()
 
-    collision.create(info.rx, info.ry, info.rh, info.rw, 255, 0 ,0, info.name, info.id, true, collision.collisions.bullets)
+    collision.create(info.rx, info.ry, info.rh, info.rw, 255, 0 ,0, info.name, info.id, true, collision.collisions.bullets, info.damage)
 
     table.insert(bullets, info)
 

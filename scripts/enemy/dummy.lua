@@ -32,8 +32,6 @@ function dummy.create (x, y)
     info.selfdestruct = function ()
         info.sprite = nil
     end
-
-    --collision.create(dummys[i].x+1, dummys[i].y, dummys[i].sprite:getHeight()-5, dummys[i].sprite:getWidth()-15, 0, 255, 0, "dummy", 12323)
     collision.create(info.rx, info.ry,  info.rh, info.rw, 0, 255, 0, "dummy", info.id, false, collision.collisions.dummys)
     
     table.insert(dummys, info)
@@ -58,7 +56,8 @@ function dummy.load()
             love.graphics.print(dummys[i].health, dummys[i].x-3, dummys[i].y-30)
 
             if collision.check(collisions.dummys[Co_id].xbox, collisions.dummys[Co_id].ybox, collisions.dummys[Co_id].wbox, collisions.dummys[Co_id].hbox, collision.collisions.bullets) then
-                dummys[i].health = dummys[i].health - 1
+                local id = collision.check(collisions.dummys[Co_id].xbox, collisions.dummys[Co_id].ybox, collisions.dummys[Co_id].wbox, collisions.dummys[Co_id].hbox, collision.collisions.bullets)[2]
+                dummys[i].health = dummys[i].health - collision.collisions.bullets[id].damage
             end
         else
             dummys[i].selfdestruct()

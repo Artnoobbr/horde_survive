@@ -5,13 +5,14 @@ collision.collisions = {
     paredes = {},
     dummys = {},
     bullets = {},
+    gunners = {}
 }
 
 package.path = "./scripts/tools/tools.lua"
 local tools = require("tools")
 
 
-function collision.create(x, y, height, width, r,g,b ,name, id, destroy, place)
+function collision.create(x, y, height, width, r,g,b ,name, id, destroy, place, damage)
     local info = {}
     info.x = x
     info.y = y
@@ -26,6 +27,10 @@ function collision.create(x, y, height, width, r,g,b ,name, id, destroy, place)
     --Isso é para objectos que se destroem quando atigem algum alvo
     if destroy == true then
         info.hit = false
+    end
+
+    if damage ~= nil then
+        info.damage = damage
     end
 
     info.xbox = info.x-info.width/2
@@ -56,12 +61,13 @@ function collision.check(x1, y1, w1, h1, place)
         local w2 = place[i].wbox
         local h2 = place[i].hbox
 
+        local id = i
+
         if x1 + w1 >= x2 and x1 <= x2 + w2 and y1 + h1 >= y2 and y1 <= y2 + h2 and x1 ~= x2 then
-            print("Collision detected!")
             if place[i].hit ~= nil then
                 place[i].hit = true
                 end
-            return true
+            return {true, id}
         end
     end
     return false

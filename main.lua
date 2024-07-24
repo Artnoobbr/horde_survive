@@ -10,6 +10,9 @@ local player = require("player")
 package.path = "./scripts/enemy/dummy.lua"
 local dummy = require("dummy")
 
+package.path = "./scripts/enemy/gunner.lua"
+local gunner = require("gunner")
+
 
 -- Map and Objects
 
@@ -43,6 +46,8 @@ end
 dummy.create(600, 380)
 dummy.create(600, 500)
 
+gunner.create( 600, 300)
+
 function love.load()
   map.update()
 
@@ -65,6 +70,7 @@ function love.draw()
   end
 
   dummy.load()
+  gunner.update()
   collision.update()
 
   love.graphics.print("Fps: "..Fps, 10, 0)

@@ -16,6 +16,11 @@ player.coords = {
     y = height/2,
 }
 
+player.test = {
+    x = 0,
+    y = 0
+}
+
 player.guns = {
     pistol = false,
     submachinegun = false
@@ -33,7 +38,7 @@ local dir = false
 local cima = false
 local baixo = false
 
-collision.create(player.coords.x, player.coords.y, status.Character:getHeight(), status.Character:getWidth(), 124, 23, 23, "player", "player", false, collision.collisions.player)
+collision.create(player.coords.x, player.coords.y, status.Character:getHeight()-2, status.Character:getWidth(), 124, 23, 23, "player", "player", false, collision.collisions.player)
 
 local function movimento()
     -- Parte do Movimento
@@ -54,14 +59,11 @@ local function movimento()
     if love.keyboard.isDown("w") then  
         d.y = d.y - 1 
         cima = true
-        fy1 = -30
-        fx1 = 0
+        fy1 = -30 fx1 = 0
 
-        fx2 = 10
-        fy2 = -30
+        fx2 = 10 fy2 = -30
 
-        fx3 = -10
-        fy3 = -30
+        fx3 = -10 fy3 = -30
     else
         cima = false
     end
@@ -69,14 +71,11 @@ local function movimento()
     if love.keyboard.isDown("s") then
         d.y = d.y + 1
         baixo = true
-        fy1 = 30
-        fx1 = 0
+        fy1 = 30 fx1 = 0
 
-        fx2 = 10
-        fy2 = 30
+        fx2 = 10 fy2 = 30
 
-        fx3 = -10
-        fy3 = 30
+        fx3 = -10 fy3 = 30
     else
         baixo = false
     end
@@ -84,14 +83,11 @@ local function movimento()
     if love.keyboard.isDown("a") then 
         d.x = d.x - 1 
         esq = true
-        fx1 = -30
-        fy1 = 0
+        fx1 = -30 fy1 = 0
 
-        fx2 = -30
-        fy2 = 10
+        fx2 = -30 fy2 = 10
 
-        fx3 = -30
-        fy3 = -10
+        fx3 = -30 fy3 = -10
     else
         esq = false
     end
@@ -99,56 +95,41 @@ local function movimento()
     if love.keyboard.isDown("d") then 
         d.x = d.x + 1 
         dir = true
-        fx1 = 30
-        fy1 = 0
+        fx1 = 30 fy1 = 0
 
-        fx2 = 30
-        fy2 = 10
+        fx2 = 30 fy2 = 10
 
-        fx3 = 30
-        fy3 = -10
+        fx3 = 30 fy3 = -10
     else
         dir = false
     end
 
     if cima and dir then
-        fx1 = 20
-        fy1 = -20
+        fx1 = 20 fy1 = -20
 
-        fx2 = 5
-        fy2 = -25
+        fx2 = 5 fy2 = -25
 
-        fx3 = 25
-        fy3 = -5
+        fx3 = 25 fy3 = -5
     elseif cima and esq then
-        fx1 = -20
-        fy1 = -20
+        fx1 = -20 fy1 = -20
 
-        fx2 = -5
-        fy2 = -25
+        fx2 = -5 fy2 = -25
 
-        fx3 = -25
-        fy3 = -5
+        fx3 = -25 fy3 = -5
     end
 
     if baixo and dir then
-        fx1 = 20
-        fy1 = 20
+        fx1 = 20 fy1 = 20
 
-        fx2 = 5
-        fy2 = 25
+        fx2 = 5 fy2 = 25
 
-        fx3 = 25
-        fy3 = 5
+        fx3 = 25 fy3 = 5
     elseif baixo and esq then
-        fx1 = -20
-        fy1 = 20
+        fx1 = -20 fy1 = 20
 
-        fx2 = -5
-        fy2 = 25
+        fx2 = -5 fy2 = 25
 
-        fx3 = -25
-        fy3 = 5
+        fx3 = -25 fy3 = 5
     end
     
     line_coords.line1.x2 = coords.x + fx1 line_coords.line1.y2 = coords.y + fy1
@@ -212,6 +193,10 @@ local function movimento()
     -- depois é so aplicar com a velocidade propria
     coords.x = coords.x + status.speed * (d.x)
     coords.y = coords.y + status.speed * d.y
+
+    player.coords.x = coords.x
+    player.coords.y = coords.y
+
 end
 
 function player.update()
@@ -234,6 +219,7 @@ end
 function player.basic_moviment()
     movimento()
 end
+
 
 
 return player

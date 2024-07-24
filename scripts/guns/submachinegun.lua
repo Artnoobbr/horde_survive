@@ -32,7 +32,7 @@ function submachinegun.update()
     if player.guns.submachinegun == true then
         if love.mouse.isDown(1) and timer <= 0 then
             shoot:play()
-            guns.bullet_create(coords.x + 25, coords.y, stats.bullet, guns.rotacionar(coords.x, coords.y))
+            guns.bullet_create(coords.x + 25, coords.y, stats.bullet, guns.rotacionar(coords.x, coords.y), 1.5)
             timer = 5
         end
     end
