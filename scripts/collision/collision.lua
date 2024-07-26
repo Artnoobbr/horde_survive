@@ -12,7 +12,7 @@ package.path = "./scripts/tools/tools.lua"
 local tools = require("tools")
 
 
-function collision.create(x, y, height, width, r,g,b ,name, id, destroy, place, damage)
+function collision.create(x, y, height, width, r,g,b ,name, id, destroy, place, damage, type)
     local info = {}
     info.x = x
     info.y = y
@@ -23,6 +23,8 @@ function collision.create(x, y, height, width, r,g,b ,name, id, destroy, place, 
     info.g = g
     info.b = b
     info.id = id
+    info.type = type
+    
 
     --Isso é para objectos que se destroem quando atigem algum alvo
     if destroy == true then
@@ -53,7 +55,8 @@ function collision.update()
     end
 end
 
-function collision.check(x1, y1, w1, h1, place)
+-- The enemy here is to check if the collision should check for a enemy bullet
+function collision.check(x1, y1, w1, h1, place, type)
     
     for i in pairs(place) do
         local x2 = place[i].xbox
@@ -64,10 +67,21 @@ function collision.check(x1, y1, w1, h1, place)
         local id = i
 
         if x1 + w1 >= x2 and x1 <= x2 + w2 and y1 + h1 >= y2 and y1 <= y2 + h2 and x1 ~= x2 then
-            if place[i].hit ~= nil then
-                place[i].hit = true
+            
+            if type ~= nil then
+                if type == place[i].type then
+                    place[i].hit = true
+                    return {true, id}
                 end
-            return {true, id}
+            else
+                if place[i].hit ~= nil then
+                    place[i].hit = true
+                end
+    
+                return {true, id}
+            end
+            
+
         end
     end
     return false

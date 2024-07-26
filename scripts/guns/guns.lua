@@ -44,7 +44,7 @@ end
 
 -- TODO: Aprender metatables do lua
 
-function guns.bullet_create(gun_x, gun_y, sprite, rotation, damage)
+function guns.bullet_create(gun_x, gun_y, sprite, rotation, damage, type)
     local info = {}
     info.sprite = love.graphics.newImage(sprite)
     info.x = gun_x
@@ -52,6 +52,7 @@ function guns.bullet_create(gun_x, gun_y, sprite, rotation, damage)
     info.name = "bullet"
     info.speed = 250
     info.timer = 200
+    info.type = type
     info.rotation = rotation
     info.selfdestruct = function ()
         info.sprite = nil
@@ -66,7 +67,9 @@ function guns.bullet_create(gun_x, gun_y, sprite, rotation, damage)
     info.rh = info.sprite:getHeight()
     info.id = tools.uuid()
 
-    collision.create(info.rx, info.ry, info.rh, info.rw, 255, 0 ,0, info.name, info.id, true, collision.collisions.bullets, info.damage)
+    collision.create(info.rx, info.ry, info.rh, info.rw, 255, 0 ,0, info.name, info.id, true, collision.collisions.bullets, info.damage, info.type)
+
+    
 
     table.insert(bullets, info)
 

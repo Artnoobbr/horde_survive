@@ -55,8 +55,8 @@ function dummy.load()
             
             love.graphics.print(dummys[i].health, dummys[i].x-3, dummys[i].y-30)
 
-            if collision.check(collisions.dummys[Co_id].xbox, collisions.dummys[Co_id].ybox, collisions.dummys[Co_id].wbox, collisions.dummys[Co_id].hbox, collision.collisions.bullets) then
-                local id = collision.check(collisions.dummys[Co_id].xbox, collisions.dummys[Co_id].ybox, collisions.dummys[Co_id].wbox, collisions.dummys[Co_id].hbox, collision.collisions.bullets)[2]
+            if collision.check(collisions.dummys[Co_id].xbox, collisions.dummys[Co_id].ybox, collisions.dummys[Co_id].wbox, collisions.dummys[Co_id].hbox, collision.collisions.bullets, "player") then
+                local id = collision.check(collisions.dummys[Co_id].xbox, collisions.dummys[Co_id].ybox, collisions.dummys[Co_id].wbox, collisions.dummys[Co_id].hbox, collision.collisions.bullets, "player")[2]
                 dummys[i].health = dummys[i].health - collision.collisions.bullets[id].damage
             end
         else

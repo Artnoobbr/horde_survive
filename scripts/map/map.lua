@@ -23,9 +23,7 @@ end
 function map.test()
     for i in pairs(collision.collisions.paredes) do
         local col = collision.collisions.paredes[i]
-        if collision.check(col.xbox, col.ybox, col.wbox, col.hbox, collision.collisions.bullets) then
-            print("Bala colidiu com a parede")
-        end
+        collision.check(col.xbox, col.ybox, col.wbox, col.hbox, collision.collisions.bullets)
     end
 end
 

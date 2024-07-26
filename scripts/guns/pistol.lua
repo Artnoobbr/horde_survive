@@ -37,7 +37,7 @@ function pistol.update()
         function love.mousepressed(x, y, button, istouch)
             if button == 1 and timer <= 0 then
                 shoot:play()
-                guns.bullet_create(coords.x + 25, coords.y, stats.bullet, guns.rotacionar(coords.x, coords.y), 1)
+                guns.bullet_create(coords.x + 25, coords.y, stats.bullet, guns.rotacionar(coords.x, coords.y), 1, "player")
                 timer = 5
             end
         end

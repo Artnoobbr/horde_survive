@@ -6,19 +6,15 @@ local collisions = collision.collisions
 
 local width, height = love.graphics.getDimensions()
 
-local status = {
+player.status = {
     speed = 1,
-    Character = love.graphics.newImage("images/characters/robert.png")
+    Character = love.graphics.newImage("images/characters/robert.png"),
+    health = 20
 }
 
 player.coords = {
     x = width/2,
     y = height/2,
-}
-
-player.test = {
-    x = 0,
-    y = 0
 }
 
 player.guns = {
@@ -38,7 +34,7 @@ local dir = false
 local cima = false
 local baixo = false
 
-collision.create(player.coords.x, player.coords.y, status.Character:getHeight()-2, status.Character:getWidth(), 124, 23, 23, "player", "player", false, collision.collisions.player)
+collision.create(player.coords.x, player.coords.y, player.status.Character:getHeight()-2, player.status.Character:getWidth(), 124, 23, 23, "player", "player", false, collision.collisions.player)
 
 local function movimento()
     -- Parte do Movimento
@@ -151,8 +147,8 @@ local function movimento()
 
     for i in pairs(collisions.player) do
         if collisions.player[i].name == "player" then
-            collisions.player[i].xbox = coords.x-status.Character:getWidth()/2
-            collisions.player[i].ybox = coords.y-status.Character:getHeight()/2
+            collisions.player[i].xbox = coords.x-player.status.Character:getWidth()/2
+            collisions.player[i].ybox = coords.y-player.status.Character:getHeight()/2
             Co_id = i
         end
     end
@@ -182,17 +178,17 @@ local function movimento()
 
     for i in pairs(collisions.player) do
         if collision.check(collisions.player[Co_id].xbox, collisions.player[Co_id].ybox, collisions.player[Co_id].wbox, collisions.player[Co_id].hbox, collision.collisions.paredes) and (line1 or line2 or line3) then
-            status.speed = 0
+            player.status.speed = 0
         else
-            status.speed = 1
+            player.status.speed = 1
         end
     end
     --print("X: "..d.x)
     --print("Y: "..d.y)
     
     -- depois é so aplicar com a velocidade propria
-    coords.x = coords.x + status.speed * (d.x)
-    coords.y = coords.y + status.speed * d.y
+    coords.x = coords.x + player.status.speed * (d.x)
+    coords.y = coords.y + player.status.speed * d.y
 
     player.coords.x = coords.x
     player.coords.y = coords.y
@@ -202,18 +198,23 @@ end
 function player.update()
     local pl_x = "Player X: " ..coords.x
     local pl_y = "Player Y: " ..coords.y
+    love.graphics.print(player.status.health, player.coords.x-3, player.coords.y-30)
 
-    love.graphics.draw(status.Character, coords.x, coords.y, 0, 1, 1, status.Character:getWidth()/2, status.Character:getHeight()/2)
+    love.graphics.draw(player.status.Character, coords.x, coords.y, 0, 1, 1, player.status.Character:getWidth()/2, player.status.Character:getHeight()/2)
 
     love.graphics.print(pl_x, 400, 15)
     love.graphics.print(pl_y, 580, 15)
 
     love.graphics.line(coords.x, coords.y, line_coords.line1.x2 , line_coords.line1.y2)
 
-    --if ((cima and dir) or (cima and esq)) or ((baixo and dir) or (baixo and esq)) then
     love.graphics.line(coords.x, coords.y, line_coords.line2.x2 , line_coords.line2.y2)
     love.graphics.line(coords.x, coords.y, line_coords.line3.x2 , line_coords.line3.y2)
-    --end
+
+    if collision.check(collisions.player[1].xbox, collisions.player[1].ybox, collisions.player[1].wbox, collisions.player[1].hbox, collisions.bullets, "enemy") then
+        local id = collision.check(collisions.player[1].xbox, collisions.player[1].ybox, collisions.player[1].wbox, collisions.player[1].hbox, collisions.bullets, "enemy")[2]
+        player.status.health = player.status.health - collisions.bullets[id].damage
+    end
+ 
 end
 
 function player.basic_moviment()
