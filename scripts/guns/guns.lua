@@ -28,18 +28,38 @@ local function directionrotation(rotation, speed)
 
 end
 
-function guns.rotacionar(gun_x, gun_y, playerS)
+function guns.rotacionar(gun_x, gun_y, playerS, mouseXplayer)
     -- Primeiro preciso pegar posição do mouse e da arma e subitrair os dois
+    local angulo = 0
+    local lado = 'nenhum'
+
     if playerS == nil or false then
         local mouseX = love.mouse.getX(); local mouseY = love.mouse.getY()
-        local angulo = math.atan2(mouseY-gun_y, mouseX-gun_x)
-        return angulo
+        angulo = math.atan2(mouseY-gun_y, mouseX-gun_x)
+        
     elseif playerS == true then
         local playerX = player.coords.x ; local playerY = player.coords.y
-        local angulo = math.atan2(playerY-gun_y, playerX-gun_x)
-        love.graphics.print("Angulo: "..angulo, 400, 30)
-        return angulo
+        angulo = math.atan2(playerY-gun_y, playerX-gun_x)
     end
+
+    if mouseXplayer == true then
+        local mouseX = love.mouse.getX(); local mouseY = love.mouse.getY()
+        local playerX = player.coords.x ; local playerY = player.coords.y
+
+        angulo = math.atan2(playerY-mouseY, playerX-mouseX)
+    end
+
+
+
+    if angulo > 1.6 or angulo < -1.6 then
+        lado = "direita"
+    else
+        lado = "esquerda"
+    end
+    
+    
+
+    return {angulo, lado}
 end
 
 -- TODO: Aprender metatables do lua

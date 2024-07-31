@@ -37,6 +37,9 @@ package.path = "./scripts/guns/submachinegun.lua"
 package.path = "./scripts/collision/collision.lua"
 local collision = require("collision")
 
+package.path = "./scripts/global.lua"
+local global = require("global")
+
 
 function love.update(dt)
   player.basic_moviment()
@@ -50,13 +53,14 @@ gunner.create( 600, 300)
 
 function love.load()
   map.update()
-
 end
 
 function love.draw()
   --map should be the first always
   map.drawmap()
   map.test()
+
+  love.graphics.print(guns.rotacionar(0,0,false,true)[1], 400, 30)
 
   player.update()
   guns.bulletupdate()
@@ -71,7 +75,11 @@ function love.draw()
 
   dummy.load()
   gunner.update()
-  collision.update()
+
+  if global.debug == true then
+    collision.update()
+  end
+  
 
   love.graphics.print("Fps: "..Fps, 10, 0)
 

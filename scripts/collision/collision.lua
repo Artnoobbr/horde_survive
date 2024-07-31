@@ -45,6 +45,8 @@ function collision.create(x, y, height, width, r,g,b ,name, id, destroy, place, 
    
 end
 
+
+-- This is only to draw the image for debugging
 function collision.update()
     for i in pairs(collision.collisions) do
         for x in pairs(collision.collisions[i]) do

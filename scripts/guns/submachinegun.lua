@@ -27,12 +27,12 @@ local stats = {
 
 function submachinegun.update()
     -- Ideia de colocar a arma no centro do player com umas mãos
-    Angulo = guns.rotacionar(coords.x, coords.y)
+    Angulo = guns.rotacionar(coords.x, coords.y)[1]
 
     if player.guns.submachinegun == true then
         if love.mouse.isDown(1) and timer <= 0 then
             shoot:play()
-            guns.bullet_create(coords.x + 25, coords.y, stats.bullet, guns.rotacionar(coords.x, coords.y), 1.5, "player")
+            guns.bullet_create(coords.x + 25, coords.y, stats.bullet, guns.rotacionar(coords.x, coords.y)[1], 1.5, "player")
             timer = 5
         end
     end

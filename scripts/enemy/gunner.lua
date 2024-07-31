@@ -53,7 +53,7 @@ local timer = 0
 
 function gunner.update()
     for i in pairs(gunners) do
-        local angulo = guns.rotacionar(gunners[i].x, gunners[i].y, true)
+        local angulo = guns.rotacionar(gunners[i].x, gunners[i].y, true)[1]
         local id_collision = 0
 
         for x in pairs(collision.collisions.gunners) do

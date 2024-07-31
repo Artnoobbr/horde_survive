@@ -4,13 +4,30 @@ package.path = "./scripts/collision/collision.lua"
 local collision = require("collision")
 local collisions = collision.collisions
 
+package.path = "./lib/anim8/anim8.lua"
+local anim8 = require("anim8")
+
+love.graphics.setDefaultFilter("nearest", "nearest")
+
 local width, height = love.graphics.getDimensions()
 
 player.status = {
     speed = 1,
     Character = love.graphics.newImage("images/characters/robert.png"),
-    health = 20
+    health = 20,
+    scaleX = 2,
+    scaleY = 2
 }
+
+local player_sheet = love.graphics.newImage("images/characters/player/player-sheet.png")
+local player_grid = anim8.newGrid(24, 25, player_sheet:getWidth(), player_sheet:getHeight()) 
+
+local player_animations = {
+    idle = anim8.newAnimation(player_grid('1-2', 1), 2),
+    movimento = anim8.newAnimation(player_grid('1-4', 2), 0.2),
+}
+
+player_animations.anim = player_animations.idle
 
 player.coords = {
     x = width/2,
@@ -42,9 +59,13 @@ local function movimento()
     -- Para resolver isso a gente precisa usar a matematica
 
     -- Criamos uma variavel para criar um simples calculo de vetor com os movimentos
+
+    
     local d = {x = 0, y = 0} -- direction to move in
-    local keep = 0
     D = d
+
+    local dt = love.timer.getDelta()
+    local movimentando = false
 
     local fx1 = line_coords.line1.fx   local fy1 = line_coords.line1.fy
     local fx2 = line_coords.line2.fx   local fy2 = line_coords.line2.fy
@@ -60,6 +81,7 @@ local function movimento()
         fx2 = 10 fy2 = -30
 
         fx3 = -10 fy3 = -30
+        movimentando = true
     else
         cima = false
     end
@@ -67,6 +89,7 @@ local function movimento()
     if love.keyboard.isDown("s") then
         d.y = d.y + 1
         baixo = true
+        movimentando = true  
         fy1 = 30 fx1 = 0
 
         fx2 = 10 fy2 = 30
@@ -84,6 +107,7 @@ local function movimento()
         fx2 = -30 fy2 = 10
 
         fx3 = -30 fy3 = -10
+        movimentando = true
     else
         esq = false
     end
@@ -96,6 +120,7 @@ local function movimento()
         fx2 = 30 fy2 = 10
 
         fx3 = 30 fy3 = -10
+        movimentando = true
     else
         dir = false
     end
@@ -178,6 +203,7 @@ local function movimento()
 
     for i in pairs(collisions.player) do
         if collision.check(collisions.player[Co_id].xbox, collisions.player[Co_id].ybox, collisions.player[Co_id].wbox, collisions.player[Co_id].hbox, collision.collisions.paredes) and (line1 or line2 or line3) then
+            movimentando = false
             player.status.speed = 0
         else
             player.status.speed = 1
@@ -190,8 +216,17 @@ local function movimento()
     coords.x = coords.x + player.status.speed * (d.x)
     coords.y = coords.y + player.status.speed * d.y
 
+
     player.coords.x = coords.x
     player.coords.y = coords.y
+
+    if movimentando == true then
+        player_animations.anim = player_animations.movimento
+    else
+        player_animations.anim = player_animations.idle
+    end
+
+   player_animations.anim:update(dt)
 
 end
 
@@ -200,15 +235,17 @@ function player.update()
     local pl_y = "Player Y: " ..coords.y
     love.graphics.print(player.status.health, player.coords.x-3, player.coords.y-30)
 
-    love.graphics.draw(player.status.Character, coords.x, coords.y, 0, 1, 1, player.status.Character:getWidth()/2, player.status.Character:getHeight()/2)
+    --love.graphics.draw(player.status.Character, coords.x, coords.y, 0, 1, 1, player.status.Character:getWidth()/2, player.status.Character:getHeight()/2)
+    player_animations.anim:draw(player_sheet, coords.x, coords.y, 0, player.status.scaleX, player.status.scaleY, 24/2, 25/2)
 
     love.graphics.print(pl_x, 400, 15)
     love.graphics.print(pl_y, 580, 15)
 
-    love.graphics.line(coords.x, coords.y, line_coords.line1.x2 , line_coords.line1.y2)
+    
+    --love.graphics.line(coords.x, coords.y, line_coords.line1.x2 , line_coords.line1.y2)
 
-    love.graphics.line(coords.x, coords.y, line_coords.line2.x2 , line_coords.line2.y2)
-    love.graphics.line(coords.x, coords.y, line_coords.line3.x2 , line_coords.line3.y2)
+    --love.graphics.line(coords.x, coords.y, line_coords.line2.x2 , line_coords.line2.y2)
+    --love.graphics.line(coords.x, coords.y, line_coords.line3.x2 , line_coords.line3.y2)
 
     if collision.check(collisions.player[1].xbox, collisions.player[1].ybox, collisions.player[1].wbox, collisions.player[1].hbox, collisions.bullets, "enemy") then
         local id = collision.check(collisions.player[1].xbox, collisions.player[1].ybox, collisions.player[1].wbox, collisions.player[1].hbox, collisions.bullets, "enemy")[2]

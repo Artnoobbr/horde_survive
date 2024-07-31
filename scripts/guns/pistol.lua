@@ -18,11 +18,13 @@ coords = {
 }
 
 local stats = {
-    offsetX = 20,
-    offsetY = 3,
-    idle = love.graphics.newImage("images/guns/pistol/gun.png"),
+    offsetX = 2,
+    offsetY = 10,
+    idle = love.graphics.newImage("images/guns/pistol/M92.png"),
     bullet = "images/guns/pistol/bullet.png",
-    damage = 1
+    damage = 1,
+    scaleX = 1.2,
+    scaleY = 1.2
 }
 
 -- TODO: Arrumar o problema da posição da arma
@@ -31,20 +33,31 @@ local timer = 0
 
 function pistol.update()
 	local centerX = width/2 ; local centerY = height/2
-    Angulo = guns.rotacionar(coords.x, coords.y)
+    Angulo = guns.rotacionar(coords.x, coords.y)[1]
+    local lado = guns.rotacionar(0,0,false,true)[2]
 
     if player.guns.pistol == true then
         function love.mousepressed(x, y, button, istouch)
             if button == 1 and timer <= 0 then
                 shoot:play()
-                guns.bullet_create(coords.x + 25, coords.y, stats.bullet, guns.rotacionar(coords.x, coords.y), 1, "player")
+                guns.bullet_create(coords.x + 25, coords.y, stats.bullet, guns.rotacionar(coords.x, coords.y)[1], 1, "player")
                 timer = 5
             end
         end
     end
 
+    --TODO: TROCAR ISSO DA AQUI PARA UMA FUNÇÃO
 
-    love.graphics.draw(stats.idle, coords.x + stats.offsetX, coords.y + stats.offsetY, Angulo, 1, 1, stats.idle:getWidth()/2, stats.idle:getHeight()/2)
+    if lado == "esquerda" and stats.scaleY > 0 then
+        stats.scaleY = -(stats.scaleY)
+        player.status.scaleX = -(player.status.scaleX)
+    elseif lado == "direita" and stats.scaleY < 0 then
+        stats.scaleY= -(stats.scaleY)
+        player.status.scaleX = -(player.status.scaleX)
+    end
+
+
+    love.graphics.draw(stats.idle, coords.x + stats.offsetX, coords.y + stats.offsetY, Angulo, stats.scaleX, stats.scaleY, stats.idle:getWidth()/2, stats.idle:getHeight()/2)
 
     love.graphics.print("Pistola X: "..coords.x + stats.offsetX, 400, 45)
     love.graphics.print("Pistola Y: "..coords.y + stats.offsetY, 580, 45)
