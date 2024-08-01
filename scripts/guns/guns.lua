@@ -2,15 +2,12 @@ local guns = {}
 
 local bullets = {}
 
-package.path = "./scripts/collision/collision.lua"
-local collision = require("collision")
+local collision = require("scripts.collision.collision")
 local collisions = collision.collisions
 
-package.path = "./scripts/tools/tools.lua"
-local tools = require("tools")
+local tools = require("scripts.tools.tools")
 
-package.path = "./scripts/player/player.lua"
-local player = require("player")
+local player = require("scripts.player.player")
 
 local function directionrotation(rotation, speed)
     --cos(degrees*pi/180)*distance - this will convert degrees to change of x
@@ -62,7 +59,31 @@ function guns.rotacionar(gun_x, gun_y, playerS, mouseXplayer)
     return {angulo, lado}
 end
 
--- TODO: Aprender metatables do lua
+function guns.flipimage(scaleXorY)
+    local lado = guns.rotacionar(0, 0, false, true)[2]
+    
+    if lado == "esquerda" and scaleXorY > 0 then
+        scaleXorY = -(scaleXorY)
+        player.status.scaleX = -(player.status.scaleX)
+    elseif lado == "direita" and scaleXorY < 0 then
+        scaleXorY = -(scaleXorY)
+        player.status.scaleX = -(player.status.scaleX)
+    end
+
+    return scaleXorY
+end
+
+
+-- Essa função vai criar um ponto que orbite a uma posição da arma
+-- Usado para cria o ponto do cano da arma e aonde a bala deve sair
+function guns.point(gun_x, gun_y, gun_length, angle)
+    local dt = love.timer.getDelta()
+    local new_angle = angle + 1*dt
+    local new_x = gun_x + math.cos(new_angle) * gun_length
+    local new_y = gun_y + math.sin(new_angle) * gun_length
+
+    return {new_x, new_y}
+end
 
 function guns.bullet_create(gun_x, gun_y, sprite, rotation, damage, type)
     local info = {}

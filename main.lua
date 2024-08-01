@@ -1,44 +1,33 @@
 -- Variaveis globais usam maisculo no começo
 
 -- Player Packages
-package.path = "./scripts/player/player.lua"
-local player = require("player")
-
+local player = require "scripts.player.player"
 
 -- Enemy Packages
 
-package.path = "./scripts/enemy/dummy.lua"
-local dummy = require("dummy")
+local dummy = require "scripts.enemy.dummy"
 
-package.path = "./scripts/enemy/gunner.lua"
-local gunner = require("gunner")
+local gunner = require "scripts.enemy.gunner"
 
 
 -- Map and Objects
 
-package.path = "./scripts/map/map.lua"
-local map = require("map")
+local map = require("scripts.map.map")
 
 
 -- Guns Packages
-package.path = "./scripts/guns/guns.lua"
-local guns = require("guns")
+local guns = require("scripts.guns.guns")
 
-package.path = "./scripts/guns/pistol.lua"
-local pistol = require("pistol")
 
-package.path = "./scripts/guns/submachinegun.lua"
-local submachinegun = require("submachinegun")
+local pistol = require("scripts.guns.pistol")
 
-package.path = "./scripts/guns/submachinegun.lua"
+local submachinegun = require("scripts.guns.submachinegun")
 
 -- Collision
 
-package.path = "./scripts/collision/collision.lua"
-local collision = require("collision")
+local collision = require("scripts.collision.collision")
 
-package.path = "./scripts/global.lua"
-local global = require("global")
+local global = require("scripts.global")
 
 
 function love.update(dt)

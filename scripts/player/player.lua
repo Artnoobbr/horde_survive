@@ -1,12 +1,11 @@
 local player = {}
 
-package.path = "./scripts/collision/collision.lua"
-local collision = require("collision")
+local collision = require("scripts.collision.collision")
 local collisions = collision.collisions
 
-package.path = "./lib/anim8/anim8.lua"
-local anim8 = require("anim8")
+local global = require("scripts.global")
 
+local anim8 = require("lib.anim8.anim8")
 love.graphics.setDefaultFilter("nearest", "nearest")
 
 local width, height = love.graphics.getDimensions()
@@ -70,6 +69,22 @@ local function movimento()
     local fx1 = line_coords.line1.fx   local fy1 = line_coords.line1.fy
     local fx2 = line_coords.line2.fx   local fy2 = line_coords.line2.fy
     local fx3 = line_coords.line3.fx   local fy3 = line_coords.line3.fy
+
+    local mouseX = love.mouse.getX(); local mouseY = love.mouse.getY()
+    local playerX = player.coords.x ; local playerY = player.coords.y
+
+    local angulo = math.atan2(playerY-mouseY, playerX-mouseX)
+
+    if (angulo > 1.6 or angulo < -1.6) then
+        if player.status.scaleX < 0 then
+            player.status.scaleX = -(player.status.scaleX)
+        end
+       
+    else
+        if player.status.scaleX > 0 then
+            player.status.scaleX = -(player.status.scaleX)
+        end
+    end
 
 
     -- NÃO USE ELSEIF NO MOVIMENTO

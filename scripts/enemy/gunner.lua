@@ -2,17 +2,13 @@ local gunner = {}
 
 local gunners = {}
 
-package.path = "./scripts/guns/guns.lua"
-local guns = require("guns")
+local guns = require("scripts.guns.guns")
 
-package.path = "./scripts/collision/collision.lua"
-local collision = require("collision")
+local collision = require("scripts.collision.collision")
 
-package.path = "./scripts/tools/tools.lua"
-local tools = require("tools")
+local tools = require("scripts.tools.tools")
 
-package.path = "./scripts/player/player.lua"
-local player = require("player")
+local player = require("scripts.player.player")
 
 local stats = {
     sprite = love.graphics.newImage("images/characters/enemy/gunner.png"),

@@ -2,8 +2,7 @@ local dummy = {}
 
 local dummys = {}
 
-package.path = "./scripts/collision/collision.lua"
-local collision = require("collision")
+local collision = require("scripts.collision.collision")
 local collisions = collision.collisions
 
 local stats = {

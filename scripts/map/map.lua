@@ -1,9 +1,8 @@
 local map = {}
 
-local sti = require("lib/sti")
+local sti = require("lib.sti")
 
-package.path = "./scripts/collision/collision.lua"
-local collision = require("collision")
+local collision = require("scripts.collision.collision")
 
 package.path = "./scripts/tools/tools.lua"
 local tools = require("tools")
