@@ -1,6 +1,6 @@
 local global = {}
 
 
-global.debug = false
+global.debug = true
 
 return global
