@@ -20,11 +20,14 @@ local stats = {
     offsetY = 11,
     idle = love.graphics.newImage("images/guns/pistol/M92.png"),
     bullet = "images/guns/pistol/bullet.png",
+    bullet_exit = love.graphics.newImage("images/guns/pistol/PistolAmmoSmall.png"),
     damage = 1,
     scaleX = 1.2,
     scaleY = 1.2,
     offsetX_Barrel = 6,
-    offsetY_Barrel = 7
+    offsetY_Barrel = 7,
+    offsetX_exit = 0,
+    offsetY_exit = 6
 }
 
 -- TODO: Arrumar o problema da posição da arma
@@ -35,8 +38,9 @@ function pistol.update()
 	local centerX = width/2 ; local centerY = height/2
     Angulo = guns.rotacionar(coords.x, coords.y)[1]
     local barrel_point = guns.point(coords.x + stats.offsetX_Barrel, coords.y + stats.offsetY_Barrel, 10, Angulo)
+    local exitbullet_point = guns.point(coords.x + stats.offsetX_exit, coords.y + stats.offsetY_exit, 0, Angulo )
 
-    --love.graphics.circle( "fill", barrel_point[1], barrel_point[2], 5 )
+    love.graphics.circle( "fill", exitbullet_point[1], exitbullet_point[2], 5 )
 
     stats.scaleY = guns.flipimage(stats.scaleY)
 
@@ -45,12 +49,11 @@ function pistol.update()
             if button == 1 and timer <= 0 then
                 shoot:play()
                 guns.bullet_create(barrel_point[1], barrel_point[2], stats.bullet, guns.rotacionar(coords.x, coords.y)[1], 1, "player")
+                guns.particle(stats.bullet_exit, exitbullet_point[1], exitbullet_point[2])
                 timer = 5
             end
         end
     end
-
-    --TODO: TROCAR ISSO DA AQUI PARA UMA FUNÇÃO
 
 
     love.graphics.draw(stats.idle, coords.x + stats.offsetX, coords.y + stats.offsetY, Angulo, stats.scaleX, stats.scaleY, stats.idle:getWidth()/2, stats.idle:getHeight()/2)

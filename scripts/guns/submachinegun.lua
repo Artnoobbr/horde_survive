@@ -20,11 +20,14 @@ local stats = {
     offsetY = 11,
     idle = love.graphics.newImage("images/guns/submachinegun/MP5.png"),
     bullet = "images/guns/submachinegun/bullet.png",
+    bullet_exit = love.graphics.newImage("images/guns/submachinegun/PistolAmmoSmall.png"),
     damage = 1,
     scaleX = 1.1,
     scaleY = 1.1,
     offset_barrelX = 8,
-    offset_barrelY = 7
+    offset_barrelY = 7,
+    offset_exitX = 0,
+    offset_exitY = 0
 }
 
 function submachinegun.update()
@@ -34,12 +37,13 @@ function submachinegun.update()
     stats.scaleY = guns.flipimage(stats.scaleY)
     
     local barrel_point = guns.point(coords.x + stats.offset_barrelX, coords.y + stats.offset_barrelY, 10, Angulo)
-
+    local exit_point = guns.point(coords.x + stats.offset_exitX, coords.y + stats.offset_exitY, 0, Angulo)
 
     if player.guns.submachinegun == true then
         if love.mouse.isDown(1) and timer <= 0 then
             shoot:play()
             guns.bullet_create(barrel_point[1], barrel_point[2], stats.bullet, guns.rotacionar(coords.x, coords.y)[1], 1.5, "player")
+            guns.particle(stats.bullet_exit, exit_point[1], exit_point[2])
             timer = 5
         end
     end

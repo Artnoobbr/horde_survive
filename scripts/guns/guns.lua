@@ -1,6 +1,7 @@
 local guns = {}
 
 local bullets = {}
+local particles = {}
 
 local collision = require("scripts.collision.collision")
 local collisions = collision.collisions
@@ -12,8 +13,6 @@ local player = require("scripts.player.player")
 local function directionrotation(rotation, speed)
     --cos(degrees*pi/180)*distance - this will convert degrees to change of x
     --sin(degrees*pi/180)*distance - this will convert degrees to change of y
-
-    -- TODO: Prestar mais atenção nas aulas de geometria
     
     -- rotation is on radians
     local angle = rotation * (180/math.pi)
@@ -118,7 +117,9 @@ end
 
 function guns.bulletupdate()
     dt = love.timer.getDelta()
-    
+
+    -- Aqui ele faz o processo de desenhar a imagem e fazer ela se mover
+    -- e depois deletar quando atingir um alvo
     for i, x in pairs(bullets) do
 
         --Gambiarra, enquanto eu não achar a forma de rotacionar o retangulo que fique na posição
@@ -153,8 +154,46 @@ function guns.bulletupdate()
         end
 
     end
+
+    --Carrega a particula da bala
+    -- TODO: Ajeitar a "animação da bala" e variar também a posição que ela vai cair
+    for i in pairs(particles) do
+
+        love.graphics.draw(particles[i].sprite, particles[i].x, particles[i].y, 0 , particles[i].scaleX, particles[i].scaleY, particles[i].sprite:getWidth()/2, particles[i].sprite:getHeight()/2)
+
+        if particles[i].timer > 0 then
+            particles[i].timer = particles[i].timer - 0.1
+            if particles[i].durationY > 0 then
+                particles[i].durationY = particles[i].durationY - 0.5
+                particles[i].y = particles[i].y + 2
+            end
+        else
+            particles[i].selfdestruct()
+            table.remove(particles, i)
+            collectgarbage()
+        end
+    end
+
     love.graphics.print("Balas: "..tools.tablelength(bullets), 400, 65)
     love.graphics.print("Colisões de bala: "..tools.tablelength(collisions.bullets), 400, 80)
+    love.graphics.print("Particulas Balas: "..tools.tablelength(particles), 400, 95)
+end
+
+
+function guns.particle(sprite_bullet, point_x, point_y)
+    local info = {}
+    info.x = point_x
+    info.y = point_y
+    info.sprite = sprite_bullet
+    info.timer = 15
+    info.durationY = 5
+    info.scaleX = guns.flipimage(1)
+    info.scaleY = 1
+    info.selfdestruct = function ()
+        info.sprite_bullet = nil
+    end
+
+    table.insert(particles, info)
 end
 
 
