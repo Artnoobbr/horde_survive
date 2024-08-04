@@ -2,6 +2,7 @@
 
 -- Player Packages
 local player = require "scripts.player.player"
+local inventario = require("scripts.player.inventario")
 
 -- Enemy Packages
 
@@ -50,17 +51,17 @@ function love.draw()
   map.test()
 
   love.graphics.print(guns.rotacionar(0,0,false,true)[1], 400, 30)
-
   player.update()
+  inventario.hotbar()
+
   guns.bulletupdate()
 
-  if player.guns.pistol == true then
+  if inventario.guns.pistol.equipado == true then
     pistol.update()
-  end
-
-  if player.guns.submachinegun == true then
+  elseif inventario.guns.submachinegun.equipado == true then
     submachinegun.update()
   end
+
 
   dummy.load()
   gunner.update()
@@ -71,19 +72,5 @@ function love.draw()
   
 
   love.graphics.print("Fps: "..Fps, 10, 0)
-
-  function love.keypressed(key, scancode, isrepeat)
-    if key == '1' then
-      if player.guns.pistol == false then
-        player.guns.pistol = true
-        player.guns.submachinegun = false
-      end
-    elseif key == '2' then
-      if player.guns.submachinegun == false then
-        player.guns.submachinegun = true
-        player.guns.pistol = false
-      end
-    end
-  end
 
 end

@@ -10,6 +10,8 @@ local tools = require("scripts.tools.tools")
 
 local player = require("scripts.player.player")
 
+local inventario = require("scripts.player.inventario")
+
 local function directionrotation(rotation, speed)
     --cos(degrees*pi/180)*distance - this will convert degrees to change of x
     --sin(degrees*pi/180)*distance - this will convert degrees to change of y
@@ -44,7 +46,6 @@ function guns.rotacionar(gun_x, gun_y, playerS, mouseXplayer)
 
         angulo = math.atan2(playerY-mouseY, playerX-mouseX)
     end
-
 
 
     if angulo > 1.6 or angulo < -1.6 then
@@ -177,6 +178,15 @@ function guns.bulletupdate()
     love.graphics.print("Balas: "..tools.tablelength(bullets), 400, 65)
     love.graphics.print("Colisões de bala: "..tools.tablelength(collisions.bullets), 400, 80)
     love.graphics.print("Particulas Balas: "..tools.tablelength(particles), 400, 95)
+end
+
+function guns.reload(gun_location, max_ammo, duration)
+    gun_location.regarregando = true
+    local falta = max_ammo - gun_location.municao
+
+    gun_location.municao = gun_location.municao + falta
+
+    gun_location.regarregando = false
 end
 
 
