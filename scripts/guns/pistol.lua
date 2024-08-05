@@ -9,8 +9,6 @@ local inventario = require("scripts.player.inventario")
 local shoot = love.audio.newSource("sounds/guns/pistol/pistol.wav", "static")
 local reload = love.audio.newSource("sounds/guns/pistol/pistolreload.mp3", "static")
 
--- TODO: Fazer a arma apontar para o mouse
-
 local width, height = love.graphics.getDimensions()
 
 coords = {

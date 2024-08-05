@@ -12,7 +12,7 @@ local player = require("scripts.player.player")
 
 local inventario = require("scripts.player.inventario")
 
-local function directionrotation(rotation, speed)
+function directionrotation(rotation, speed)
     --cos(degrees*pi/180)*distance - this will convert degrees to change of x
     --sin(degrees*pi/180)*distance - this will convert degrees to change of y
     

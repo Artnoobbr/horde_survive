@@ -10,7 +10,7 @@ local tools = require("tools")
 --local parede = {}
 
 function map.update()
-    DebugMap = sti("maps/dungeontest2.lua")
+    DebugMap = sti("maps/dungeon.lua")
 
     if DebugMap.layers["paredes"] then
         for i, obj in pairs(DebugMap.layers["paredes"].objects) do

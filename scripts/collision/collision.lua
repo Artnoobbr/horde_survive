@@ -5,7 +5,8 @@ collision.collisions = {
     paredes = {},
     dummys = {},
     bullets = {},
-    gunners = {}
+    gunners = {},
+    ponto = {}
 }
 
 
