@@ -2,6 +2,8 @@ local gunner = {}
 
 local gunners = {}
 
+local points = {}
+
 local guns = require("scripts.guns.guns")
 
 local collision = require("scripts.collision.collision")
@@ -50,11 +52,11 @@ end
 local timer = 0
 local timer_andando = 0
 
-function create_point(enemy_x, enemy_y)
+function create_point(enemy_x, enemy_y, id)
+    info = {}
     local x = math.random(-100, 100)
     local y = math.random(-100, 100)
 
-    local id = tools.uuid()
     local valid = true
 
 
@@ -71,10 +73,12 @@ function create_point(enemy_x, enemy_y)
     if collision.check(collision.collisions.ponto[collision_id].xbox, collision.collisions.ponto[collision_id].ybox, collision.collisions.ponto[collision_id].wbox, collision.collisions.ponto[collision_id].hbox, collision.collisions.paredes) then
         print("invalid")
         table.remove(collision.collisions.ponto, collision_id)
-        valid = false
+        return
     end
-
-    return {x, y, collision_id, valid}
+    info.x = x
+    info.y = y
+    info.id = id
+    table.insert(points, info)
 end
 
 function gunner.update()
@@ -103,20 +107,34 @@ function gunner.update()
             end
 
             if gunners[i].andando == false then
-                point_to_move = create_point(gunners[i].x, gunners[i].y)
-                if point_to_move[4] == false then
-                    gunners[i].andando = false
-                else
-                    gunners[i].andando = true
+                local found = false
+               create_point(gunners[i].x, gunners[i].y, gunners[i].id)
+                for b in pairs(points) do
+                    if points[b].id == gunners[i].id then
+                        found = true
+                        gunners[i].andando = true
+                    end
                 end
-
             end
 
             -- TODO: Consertar bug de multiplos inimigos terem o mesmo ponto de movimento
             if gunners[i].andando == true then
-                local distanciaX = gunners[i].x - point_to_move[1]
-                local distanciaY = gunners[i].y - point_to_move[2]
+                local point_id = 0
+                local collision_id = 0
+                for x in pairs(points) do
+                    if points[x].id == gunners[i].id then
+                        point_id = x
+                    end
+                end
 
+                for muuuu in pairs(collision.collisions.ponto) do
+                    if collision.collisions.ponto[muuuu].id == gunners[i].id then
+                        collision_id = muuuu
+                    end
+                end
+
+                local distanciaX = gunners[i].x - points[point_id].x
+                local distanciaY = gunners[i].y - points[point_id].y
                 distance = math.sqrt(distanciaX*distanciaX+distanciaY*distanciaY)
 
                 velocityX = distanciaX/distance*gunners[i].speed
@@ -127,29 +145,42 @@ function gunner.update()
                 gunners[i].y = gunners[i].y - velocityY * dt
                 timer_andando = timer_andando - dt
 
-                if collision.check(collision.collisions.ponto[point_to_move[3]].xbox, collision.collisions.ponto[point_to_move[3]].ybox, collision.collisions.ponto[point_to_move[3]].wbox, collision.collisions.ponto[point_to_move[3]].hbox, collision.collisions.gunners) then
-                    table.remove(collision.collisions.ponto, point_to_move[3])
+                 love.graphics.line(gunners[i].x, gunners[i].y, points[point_id].x, points[point_id].y)
+
+                if collision.check(collision.collisions.ponto[collision_id].xbox, collision.collisions.ponto[collision_id].ybox, collision.collisions.ponto[collision_id].wbox, collision.collisions.ponto[collision_id].hbox, collision.collisions.gunners) then
+                    table.remove(collision.collisions.ponto, collision_id)
+                    table.remove(points, point_id)
                     gunners[i].andando = false
                 end
+
             end
 
-
-            love.graphics.line(gunners[i].x, gunners[i].y, point_to_move[1], point_to_move[2])
             if timer == 0 then
                 guns.bullet_create(gunners[i].x + 20, gunners[i].y + 3, stats.bullet, angulo, gunners[i].damage, "enemy")
                 timer = 20
             else
                 timer = timer - 0.5
             end
-            
 
         else
             gunners[i].selfdestruct()
-            if gunners[i].andando == true then
-                table.remove(collision.collisions.ponto, point_to_move[3])
+
+            -- Por favor tirar isso da aqui depois
+            for x in pairs(points) do
+                if points[x].id == gunners[i].id then
+                    point_id = x
+                end
+            end
+
+            for muuuu in pairs(collision.collisions.ponto) do
+                if collision.collisions.ponto[muuuu].id == gunners[i].id then
+                    collision_id = muuuu
+                end
             end
             table.remove(collision.collisions.gunners, id_collision)
             table.remove(gunners, i)
+            table.remove(points, point_id)
+            table.remove(collision.collisions.ponto, collision_id)
         end
     end
 end

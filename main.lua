@@ -42,6 +42,11 @@ dummy.create(600, 500)
 gunner.create( 600, 300)
 gunner.create(600, 200)
 
+gunner.create(600, 100)
+
+
+gunner.create(300, 200)
+
 function love.load()
   map.update()
 end
