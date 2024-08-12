@@ -31,8 +31,6 @@ local collision = require("scripts.collision.collision")
 local global = require("scripts.global")
 
 
--- TODO: Seperar o Draw e o update dos scripts
-
 function love.update(dt)
   player.update(dt)
   inventario.hotbar()
