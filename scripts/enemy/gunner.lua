@@ -9,34 +9,48 @@ local guns = require("scripts.guns.guns")
 local collision = require("scripts.collision.collision")
 
 local tools = require("scripts.tools.tools")
+local anim8 = require("lib.anim8.anim8")
+local pistol = require("scripts.guns.pistol")
 
 local player = require("scripts.player.player")
 
 local stats = {
     sprite = love.graphics.newImage("images/characters/enemy/gunner.png"),
-    gun = love.graphics.newImage("images/guns/pistol/gun.png"),
+    gun = love.graphics.newImage("images/guns/pistol/M92.png"),
     bullet = "images/guns/pistol/bullet.png",
     health = 20,
-    damage = 1
+    damage = 1,
+    scaleX = 2,
+    scaleY = 2
 }
-
+local enemy_sheet = love.graphics.newImage("images/characters/player/player-sheet.png")
+local enemy_grid = anim8.newGrid(24, 25, enemy_sheet:getWidth(), enemy_sheet:getHeight())
 
 function  gunner.create(x, y)
     local info = {}
     info.health = stats.health
     info.sprite = stats.sprite
     info.gun = stats.gun
+    info.gun_scaleX = 1.2
+    info.gun_scaleY = 1.2
     info.bullet = stats.gun
     info.damage = stats.damage
     info.x = x
     info.y = y
     info.andando = false
     info.speed = 20
+    info.scaleX = stats.scaleX
+    info.scaleY = stats.scaleY
+    info.animations = {
+        idle = anim8.newAnimation(enemy_grid('1-2', 1), 2),
+        movimento = anim8.newAnimation(enemy_grid('1-4', 2), 0.2),
+    }
+    info.anim = info.animations.idle
 
-    info.rx = info.x-info.sprite:getWidth()/2
-    info.ry = info.y-info.sprite:getHeight()/2
-    info.rw = info.sprite:getWidth()
-    info.rh = info.sprite:getHeight()
+    info.rx = info.x
+    info.ry = info.y
+    info.rw = 27
+    info.rh = 35
     info.id = tools.uuid()
 
 
@@ -81,11 +95,43 @@ function create_point(enemy_x, enemy_y, id)
     table.insert(points, info)
 end
 
-function gunner.update()
+
+function gunner.draw()
     for i in pairs(gunners) do
         local angulo = guns.rotacionar(gunners[i].x, gunners[i].y, true)[1]
+        if gunners[i].health > 0 then
+            gunners[i].anim:draw(enemy_sheet, gunners[i].x, gunners[i].y, 0, gunners[i].scaleX,  gunners[i].scaleY, 24/2, 25/2)
+            love.graphics.draw(gunners[i].gun, gunners[i].x, gunners[i].y , angulo, 1, 1, gunners[i].gun:getWidth()/2,  gunners[i].gun:getHeight()/2)
+            love.graphics.print(gunners[i].health, gunners[i].x-3, gunners[i].y-30)
+        end
+
+        if gunners[i].andando == true then
+            for x in pairs(points) do
+                if points[x].id == gunners[i].id then
+                    point_id = x
+                end
+            end
+            love.graphics.line(gunners[i].x, gunners[i].y, points[point_id].x, points[point_id].y)
+        end
+    end
+end
+
+
+function gunner.update(dt)
+    for i in pairs(gunners) do
+        local angulo = guns.rotacionar(gunners[i].x, gunners[i].y, true)[1]
+        local lado = guns.rotacionar(gunners[i].x, gunners[i].y, true)[2]
         local id_collision = 0
-        local dt = love.timer.getDelta()
+
+        if (angulo > 1.6 or angulo < -1.6) then
+            if gunners[i].scaleX > 0 then
+                gunners[i].scaleX = -(gunners[i].scaleX)
+            end
+        else
+            if gunners[i].scaleX < 0 then
+                gunners[i].scaleX = -(gunners[i].scaleX)
+            end
+        end
 
         for x in pairs(collision.collisions.gunners) do
             if collision.collisions.gunners[x].id == gunners[i].id then
@@ -96,10 +142,6 @@ function gunner.update()
         end
         
         if gunners[i].health > 0 then
-            love.graphics.draw(gunners[i].sprite, gunners[i].x, gunners[i].y, 0, 1, 1, gunners[i].sprite:getWidth()/2,  gunners[i].sprite:getHeight()/2)
-            love.graphics.draw(gunners[i].gun, gunners[i].x + 20, gunners[i].y + 3, angulo, 1, 1, gunners[i].gun:getWidth()/2,  gunners[i].gun:getHeight()/2)
-
-            love.graphics.print(gunners[i].health, gunners[i].x-3, gunners[i].y-30)
 
             if collision.check(collision.collisions.gunners[id_collision].xbox, collision.collisions.gunners[id_collision].ybox, collision.collisions.gunners[id_collision].wbox, collision.collisions.gunners[id_collision].hbox, collision.collisions.bullets, "player") then
                 local id = collision.check(collision.collisions.gunners[id_collision].xbox, collision.collisions.gunners[id_collision].ybox, collision.collisions.gunners[id_collision].wbox, collision.collisions.gunners[id_collision].hbox, collision.collisions.bullets, "player")[2]
@@ -107,6 +149,7 @@ function gunner.update()
             end
 
             if gunners[i].andando == false then
+                gunners[i].anim = gunners[i].animations.idle
                 local found = false
                create_point(gunners[i].x, gunners[i].y, gunners[i].id)
                 for b in pairs(points) do
@@ -117,8 +160,8 @@ function gunner.update()
                 end
             end
 
-            -- TODO: Consertar bug de multiplos inimigos terem o mesmo ponto de movimento
             if gunners[i].andando == true then
+                gunners[i].anim = gunners[i].animations.movimento
                 local point_id = 0
                 local collision_id = 0
                 for x in pairs(points) do
@@ -145,8 +188,6 @@ function gunner.update()
                 gunners[i].y = gunners[i].y - velocityY * dt
                 timer_andando = timer_andando - dt
 
-                 love.graphics.line(gunners[i].x, gunners[i].y, points[point_id].x, points[point_id].y)
-
                 if collision.check(collision.collisions.ponto[collision_id].xbox, collision.collisions.ponto[collision_id].ybox, collision.collisions.ponto[collision_id].wbox, collision.collisions.ponto[collision_id].hbox, collision.collisions.gunners) then
                     table.remove(collision.collisions.ponto, collision_id)
                     table.remove(points, point_id)
@@ -162,6 +203,7 @@ function gunner.update()
                 timer = timer - 0.5
             end
 
+            gunners[i].anim:update(dt)
         else
             gunners[i].selfdestruct()
 

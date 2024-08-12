@@ -9,7 +9,7 @@ local tools = require("tools")
 
 --local parede = {}
 
-function map.update()
+function map.load()
     DebugMap = sti("maps/dungeon.lua")
 
     if DebugMap.layers["paredes"] then

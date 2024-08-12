@@ -40,7 +40,7 @@ player.guns = {
 
 collision.create(player.coords.x, player.coords.y, 35, 27, 124, 23, 23, "player", "player", false, collision.collisions.player)
 
-local function movimento()
+function player.update(dt)
     -- Parte do Movimento
     -- Temos um problema para resolver que é o player andando mais rapido na diagonal
     -- Para resolver isso a gente precisa usar a matematica
@@ -51,7 +51,6 @@ local function movimento()
     local d = {x = 0, y = 0} -- direction to move in
     D = d
 
-    local dt = love.timer.getDelta()
     local movimentando = false
 
     local mouseX = love.mouse.getX(); local mouseY = love.mouse.getY()
@@ -63,7 +62,6 @@ local function movimento()
         if player.status.scaleX < 0 then
             player.status.scaleX = -(player.status.scaleX)
         end
-       
     else
         if player.status.scaleX > 0 then
             player.status.scaleX = -(player.status.scaleX)
@@ -160,9 +158,14 @@ local function movimento()
 
    player_animations.anim:update(dt)
 
+    if collision.check(collisions.player[1].xbox, collisions.player[1].ybox, collisions.player[1].wbox, collisions.player[1].hbox, collisions.bullets, "enemy") then
+        local id = collision.check(collisions.player[1].xbox, collisions.player[1].ybox, collisions.player[1].wbox, collisions.player[1].hbox, collisions.bullets, "enemy")[2]
+        player.status.health = player.status.health - collisions.bullets[id].damage
+    end
+
 end
 
-function player.update()
+function player.draw()
     local pl_x = "Player X: " ..coords.x
     local pl_y = "Player Y: " ..coords.y
     love.graphics.print(player.status.health, player.coords.x-3, player.coords.y-30)
@@ -172,16 +175,6 @@ function player.update()
 
     love.graphics.print(pl_x, 400, 15)
     love.graphics.print(pl_y, 580, 15)
-
-    if collision.check(collisions.player[1].xbox, collisions.player[1].ybox, collisions.player[1].wbox, collisions.player[1].hbox, collisions.bullets, "enemy") then
-        local id = collision.check(collisions.player[1].xbox, collisions.player[1].ybox, collisions.player[1].wbox, collisions.player[1].hbox, collisions.bullets, "enemy")[2]
-        player.status.health = player.status.health - collisions.bullets[id].damage
-    end
- 
-end
-
-function player.basic_moviment()
-    movimento()
 end
 
 

@@ -44,8 +44,8 @@ function collision.create(x, y, height, width, r,g,b ,name, id, destroy, place, 
 end
 
 
--- This is only to draw the image for debugging
-function collision.update()
+-- Aqui ele so vai desenhar o quadrados, para fins de debug
+function collision.draw()
     for i in pairs(collision.collisions) do
         for x in pairs(collision.collisions[i]) do
             love.graphics.setColor(collision.collisions[i][x].r, collision.collisions[i][x].g, collision.collisions[i][x].b)
@@ -55,7 +55,7 @@ function collision.update()
     end
 end
 
--- The enemy here is to check if the collision should check for a enemy bullet
+
 function collision.check(x1, y1, w1, h1, place, type)
     
     for i in pairs(place) do

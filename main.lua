@@ -31,9 +31,23 @@ local collision = require("scripts.collision.collision")
 local global = require("scripts.global")
 
 
+-- TODO: Seperar o Draw e o update dos scripts
+
 function love.update(dt)
-  player.basic_moviment()
+  player.update(dt)
+  inventario.hotbar()
   Fps = love.timer.getFPS()
+  guns.bulletupdate(dt)
+  dummy.update(dt)
+  gunner.update(dt)
+
+
+  if inventario.guns.pistol.equipado == true then
+    pistol.update(dt)
+  elseif inventario.guns.submachinegun.equipado == true then
+    submachinegun.update(dt)
+  end
+
 end
 
 dummy.create(600, 380)
@@ -48,7 +62,7 @@ gunner.create(600, 100)
 gunner.create(300, 200)
 
 function love.load()
-  map.update()
+  map.load()
 end
 
 function love.draw()
@@ -57,25 +71,24 @@ function love.draw()
   map.test()
 
   love.graphics.print(guns.rotacionar(0,0,false,true)[1], 400, 30)
-  player.update()
-  inventario.hotbar()
+  player.draw()
 
-  guns.bulletupdate()
+  guns.bulletdraw()
 
   if inventario.guns.pistol.equipado == true then
-    pistol.update()
+    pistol.draw()
   elseif inventario.guns.submachinegun.equipado == true then
-    submachinegun.update()
+    submachinegun.draw()
   end
 
 
-  dummy.load()
-  gunner.update()
+  dummy.draw()
+  gunner.draw()
 
   if global.debug == true then
-    collision.update()
+    collision.draw()
   end
-  
+
 
   love.graphics.print("Fps: "..Fps, 10, 0)
 

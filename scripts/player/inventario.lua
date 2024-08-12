@@ -36,8 +36,6 @@ function inventario.hotbar()
             inventario.guns.submachinegun.equipado = true
         end
     end
-
-
 end
 
 return inventario

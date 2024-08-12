@@ -37,7 +37,16 @@ function dummy.create (x, y)
 end
 
 
-function dummy.load()
+function dummy.draw()
+    for i in pairs(dummys) do
+        if dummys[i].health > 0 then
+            love.graphics.draw(dummys[i].sprite, dummys[i].x, dummys[i].y, dummys[i].rotation, 1, 1, dummys[i].sprite:getWidth()/2,  dummys[i].sprite:getHeight()/2)
+            love.graphics.print(dummys[i].health, dummys[i].x-3, dummys[i].y-30)
+        end
+    end
+end
+
+function dummy.update(dt)
     for i in pairs(dummys) do
 
         for v in pairs(collisions.dummys) do
@@ -50,9 +59,6 @@ function dummy.load()
         end
 
         if dummys[i].health > 0 then
-            love.graphics.draw(dummys[i].sprite, dummys[i].x, dummys[i].y, dummys[i].rotation, 1, 1, dummys[i].sprite:getWidth()/2,  dummys[i].sprite:getHeight()/2)
-            
-            love.graphics.print(dummys[i].health, dummys[i].x-3, dummys[i].y-30)
 
             if collision.check(collisions.dummys[Co_id].xbox, collisions.dummys[Co_id].ybox, collisions.dummys[Co_id].wbox, collisions.dummys[Co_id].hbox, collision.collisions.bullets, "player") then
                 local id = collision.check(collisions.dummys[Co_id].xbox, collisions.dummys[Co_id].ybox, collisions.dummys[Co_id].wbox, collisions.dummys[Co_id].hbox, collision.collisions.bullets, "player")[2]
@@ -63,8 +69,6 @@ function dummy.load()
             table.remove(dummys, i)
             table.remove(collisions.dummys, Co_id)
         end
-        
-
     end
 end
 

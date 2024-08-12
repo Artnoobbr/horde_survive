@@ -33,13 +33,12 @@ local stats = {
     offset_exitY = 0
 }
 
-local function draw_submachinegun()
+function submachinegun.draw()
     love.graphics.draw(stats.idle, coords.x + stats.offsetX, coords.y + stats.offsetY, Angulo, stats.scaleX, stats.scaleY, stats.idle:getWidth()/2, stats.idle:getHeight()/2)
     love.graphics.print("Munição Submetralhadora: "..inventario.guns.submachinegun.municao, 400, 45)
 end
 
-function submachinegun.update()
-    dt = love.timer.getDelta()
+function submachinegun.update(dt)
 
     Angulo = guns.rotacionar(coords.x, coords.y)[1]
     stats.scaleY = guns.flipimage(stats.scaleY)
@@ -68,8 +67,6 @@ function submachinegun.update()
     if timer > 0 then
         timer = timer - dt
     end
-
-    draw_submachinegun()
 end
 
 return submachinegun

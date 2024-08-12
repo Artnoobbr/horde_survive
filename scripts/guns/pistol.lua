@@ -37,18 +37,15 @@ local stats = {
 local timer = 0
 local timer_reload
 
-local function draw_pistol()
-    --love.graphics.circle( "fill", exitbullet_point[1], exitbullet_point[2], 5 )
+
+function pistol.draw()
     love.graphics.draw(stats.idle, coords.x + stats.offsetX, coords.y + stats.offsetY, Angulo, stats.scaleX, stats.scaleY, stats.idle:getWidth()/2, stats.idle:getHeight()/2)
 
     love.graphics.print("Munição Pistola: "..inventario.guns.pistol.municao, 400, 45)
     love.graphics.print("Pistola Y: "..coords.y + stats.offsetY, 580, 45)
 end
 
-
-
-function pistol.update()
-    dt = love.timer.getDelta()
+function pistol.update(dt)
 
     Angulo = guns.rotacionar(coords.x, coords.y)[1]
     local barrel_point = guns.point(coords.x + stats.offsetX_Barrel, coords.y + stats.offsetY_Barrel, 10, Angulo)
@@ -81,7 +78,6 @@ function pistol.update()
     if timer > 0 then
         timer = timer - dt
     end
-    draw_pistol()
 end
 
 return pistol

@@ -54,7 +54,6 @@ function guns.rotacionar(gun_x, gun_y, playerS, mouseXplayer)
         lado = "esquerda"
     end
     
-    
 
     return {angulo, lado}
 end
@@ -116,13 +115,25 @@ function guns.bullet_create(gun_x, gun_y, sprite, rotation, damage, type)
 
 end
 
-function guns.bulletupdate()
-    dt = love.timer.getDelta()
+function guns.bulletdraw()
+    for i in pairs(bullets) do
+        love.graphics.draw(bullets[i].sprite, bullets[i].x, bullets[i].y, bullets[i].rotation, 1, 1, bullets[i].sprite:getWidth()/2,  bullets[i].sprite:getHeight()/2)
+    end
+
+    for i in pairs(particles) do
+        love.graphics.draw(particles[i].sprite, particles[i].x, particles[i].y, 0 , particles[i].scaleX, particles[i].scaleY, particles[i].sprite:getWidth()/2, particles[i].sprite:getHeight()/2)
+    end
+
+    love.graphics.print("Balas: "..tools.tablelength(bullets), 400, 65)
+    love.graphics.print("Colisões de bala: "..tools.tablelength(collisions.bullets), 400, 80)
+    love.graphics.print("Particulas Balas: "..tools.tablelength(particles), 400, 95)
+end
+
+function guns.bulletupdate(dt)
 
     -- Aqui ele faz o processo de desenhar a imagem e fazer ela se mover
     -- e depois deletar quando atingir um alvo
-    for i, x in pairs(bullets) do
-
+    for i in pairs(bullets) do
         --Gambiarra, enquanto eu não achar a forma de rotacionar o retangulo que fique na posição
         --Da bala, eu vou deixar assim mesmo
 
@@ -135,8 +146,6 @@ function guns.bulletupdate()
             end
         end
 
-        
-        love.graphics.draw(bullets[i].sprite, bullets[i].x, bullets[i].y, bullets[i].rotation, 1, 1, bullets[i].sprite:getWidth()/2,  bullets[i].sprite:getHeight()/2)
 
         if bullets[i].timer > 0 and collisions.bullets[Co_id].hit == false then
             bullets[i].timer = bullets[i].timer - 1
@@ -160,8 +169,6 @@ function guns.bulletupdate()
     -- TODO: Ajeitar a "animação da bala" e variar também a posição que ela vai cair
     for i in pairs(particles) do
 
-        love.graphics.draw(particles[i].sprite, particles[i].x, particles[i].y, 0 , particles[i].scaleX, particles[i].scaleY, particles[i].sprite:getWidth()/2, particles[i].sprite:getHeight()/2)
-
         if particles[i].timer > 0 then
             particles[i].timer = particles[i].timer - 0.1
             if particles[i].durationY > 0 then
@@ -174,10 +181,6 @@ function guns.bulletupdate()
             collectgarbage()
         end
     end
-
-    love.graphics.print("Balas: "..tools.tablelength(bullets), 400, 65)
-    love.graphics.print("Colisões de bala: "..tools.tablelength(collisions.bullets), 400, 80)
-    love.graphics.print("Particulas Balas: "..tools.tablelength(particles), 400, 95)
 end
 
 function guns.reload(gun_location, max_ammo, duration)
