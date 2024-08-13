@@ -66,18 +66,26 @@ end
 local timer = 0
 local timer_andando = 0
 
-function create_point(enemy_x, enemy_y, id)
-    info = {}
-    local x = math.random(-100, 100)
-    local y = math.random(-100, 100)
+local function create_point(enemy_x, enemy_y, id, random, width, height)
+    local info = {}
+
+    local x = enemy_x
+    local y = enemy_y
+
+    if random == true then
+        local x = math.random(-100, 100)
+        local y = math.random(-100, 100)
+
+        x = x + enemy_x
+        y = y + enemy_y
+    end
+
 
     local valid = true
 
 
-    x = x + enemy_x
-    y = y + enemy_y
 
-    collision.create(x, y, 10, 10, 255, 255 ,255, "point", id, false, collision.collisions.ponto)
+    collision.create(x, y, height, width, 255, 255 ,255, "point", id, false, collision.collisions.ponto)
     for i in pairs(collision.collisions.ponto) do
         if id == collision.collisions.ponto[i].id then
             collision_id = i
@@ -151,7 +159,7 @@ function gunner.update(dt)
             if gunners[i].andando == false then
                 gunners[i].anim = gunners[i].animations.idle
                 local found = false
-               create_point(gunners[i].x, gunners[i].y, gunners[i].id)
+               create_point(gunners[i].x, gunners[i].y, gunners[i].id, true, 10 , 10)
                 for b in pairs(points) do
                     if points[b].id == gunners[i].id then
                         found = true
@@ -227,7 +235,36 @@ function gunner.update(dt)
     end
 end
 
+local cooldown_spawn = 20
 
+function gunner.random_create()
+    local x = math.random(75, 725)
+    local y = math.random(105, 523)
+    local id = tools.uuid()
+    local collision_id = 0
+
+    if cooldown_spawn <= 0 then
+        create_point(x, y, id, false, 30, 30)
+    else
+        cooldown_spawn = cooldown_spawn - 0.1
+    end
+    
+    for i in pairs(collision.collisions.ponto) do
+        if collision.collisions.ponto[i].id == id then
+            collision_id = i
+        end
+    end
+
+    for i in pairs(points) do
+        if points[i].id == id then
+            print("Point is valid!")
+            gunner.create(300, 500)
+            table.remove(points, i)
+            table.remove(collision.collisions.ponto, collision_id)
+            cooldown_spawn = 50
+        end
+    end
+end
 
 
 return gunner

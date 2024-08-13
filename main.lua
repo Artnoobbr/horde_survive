@@ -15,6 +15,10 @@ local gunner = require "scripts.enemy.gunner"
 
 local map = require("scripts.map.map")
 
+local menu = require("scripts.menu.menu")
+
+local loader = require("scripts.map.loader")
+
 
 -- Guns Packages
 local guns = require("scripts.guns.guns")
@@ -32,62 +36,55 @@ local global = require("scripts.global")
 
 
 function love.update(dt)
-  player.update(dt)
-  inventario.hotbar()
-  Fps = love.timer.getFPS()
-  guns.bulletupdate(dt)
-  dummy.update(dt)
-  gunner.update(dt)
 
+  if menu.main_menu == true then
+    menu.update()
+  else
+    loader.load()
+    player.update(dt)
+    inventario.hotbar()
+    guns.bulletupdate(dt)
+    dummy.update(dt)
+    loader.checkupdate(dt)
+    gunner.random_create()
 
-  if inventario.guns.pistol.equipado == true then
-    pistol.update(dt)
-  elseif inventario.guns.submachinegun.equipado == true then
-    submachinegun.update(dt)
+    if inventario.guns.pistol.equipado == true then
+      pistol.update(dt)
+    elseif inventario.guns.submachinegun.equipado == true then
+      submachinegun.update(dt)
+    end
+    Fps = love.timer.getFPS()
   end
 
-end
-
-dummy.create(600, 380)
-dummy.create(600, 500)
-
-gunner.create( 600, 300)
-gunner.create(600, 200)
-
-gunner.create(600, 100)
-
-
-gunner.create(300, 200)
-
-function love.load()
-  map.load()
 end
 
 function love.draw()
   --map should be the first always
-  map.drawmap()
-  map.test()
-
-  love.graphics.print(guns.rotacionar(0,0,false,true)[1], 400, 30)
-  player.draw()
-
-  guns.bulletdraw()
-
-  if inventario.guns.pistol.equipado == true then
-    pistol.draw()
-  elseif inventario.guns.submachinegun.equipado == true then
-    submachinegun.draw()
+  if menu.main_menu == true then
+    menu.draw()
+  else
+    map.drawmap()
+    map.test()
+  
+    love.graphics.print(guns.rotacionar(0,0,false,true)[1], 400, 30)
+    player.draw()
+  
+    guns.bulletdraw()
+  
+    if inventario.guns.pistol.equipado == true then
+      pistol.draw()
+    elseif inventario.guns.submachinegun.equipado == true then
+      submachinegun.draw()
+    end
+  
+    dummy.draw()
+    loader.checkdraw()
+  
+    love.graphics.print("Fps: "..Fps, 10, 0)
   end
-
-
-  dummy.draw()
-  gunner.draw()
 
   if global.debug == true then
     collision.draw()
   end
-
-
-  love.graphics.print("Fps: "..Fps, 10, 0)
 
 end

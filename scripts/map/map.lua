@@ -7,6 +7,8 @@ local collision = require("scripts.collision.collision")
 package.path = "./scripts/tools/tools.lua"
 local tools = require("tools")
 
+map.loaded = false
+
 --local parede = {}
 
 function map.load()
@@ -16,7 +18,9 @@ function map.load()
         for i, obj in pairs(DebugMap.layers["paredes"].objects) do
             collision.create(obj.x+obj.width/2+1, obj.y+obj.height/2, obj.height, obj.width, 0, 0, 255, "parede", math.random(), false, collision.collisions.paredes)
         end
-    end    
+    end
+    
+    map.loaded = true
 end
 
 function map.test()
@@ -27,8 +31,10 @@ function map.test()
 end
 
 function map.drawmap()
-    DebugMap:draw()
-    love.graphics.print("Colisões paredes: "..tools.tablelength(collision.collisions.paredes), 500, 65)
+    if map.loaded == true then
+        DebugMap:draw()
+        love.graphics.print("Colisões paredes: "..tools.tablelength(collision.collisions.paredes), 500, 65)
+    end
 end
 
 

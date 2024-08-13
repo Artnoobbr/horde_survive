@@ -6,7 +6,9 @@ collision.collisions = {
     dummys = {},
     bullets = {},
     gunners = {},
-    ponto = {}
+    ponto = {},
+    mouse = {},
+    textos = {}
 }
 
 
