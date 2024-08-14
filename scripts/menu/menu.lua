@@ -9,6 +9,7 @@ local monogram = love.graphics.newFont("fonts/monogram/ttf/monogram.ttf", 50)
 local tools = require("scripts.tools.tools")
 
 local width = love.graphics.getWidth()
+local height = love.graphics.getHeight()
 
 local mouse = {
     x = 0,
@@ -17,26 +18,55 @@ local mouse = {
 
 local textos = {
     principal = {
+        titulo = {
+            texto = love.graphics.newText(monogram, "Luagame"),
+            x = width/2,
+            y = 120,
+            nome = "titulo"
+        },
         jogar = {
             texto = love.graphics.newText(monogram, "Jogar"),
             x = width/2,
-            y = 200,
+            y = 220,
             nome = "jogar"
         },
         sair = {
             texto = love.graphics.newText(monogram, "Sair"),
             x = width/2,
-            y = 300,
+            y = 420,
             nome = "sair"
+        },
+        creditos = {
+            texto = love.graphics.newText(monogram, "Creditos"),
+            x = width/2,
+            y = 320,
+            nome = "creditos"
         }
+    },
+    creditos = {
+        lorem = {
+            texto = love.graphics.newText(monogram, "Lorem ipsum dolor sit amet "),
+            x = width/2,
+            y = height/2,
+            nome = 'lorem'
+        },
+
+        voltar = {
+            texto = love.graphics.newText(monogram, "Voltar"),
+            x = width/2,
+            y = 550,
+            nome = 'voltar'
+        }
+
     }
 }
 
 local menu_loc = "principal"
+local text_loc = textos.principal
 
 collision.create(mouse.x, mouse.y, 5, 5, 255, 255, 255, "mouse", 0, false, collision.collisions.mouse)
 
-local function delete_text()
+local function deletar_texto()
     for i in pairs(collision.collisions.textos) do
 
         -- Quando for remover tudo de uma lista usar o nil
@@ -48,32 +78,48 @@ local function delete_text()
     end
 end
 
-
 local function acao_btn(name)
     if name == "sair" then
         love.event.quit()
     elseif name == "jogar" then
-        delete_text()
+        deletar_texto()
         table.remove(collision.collisions.mouse, 1)
         menu.main_menu = false
+    elseif name == "creditos" then
+        menu_loc = "creditos"
+        carregar()
+    elseif name == "voltar" then
+        menu_loc = "principal"
+        carregar()
     end
 end
 
 
-local function carregar()
+local function adicionar_texto(localizacao)
+    for i in pairs(localizacao) do
+        collision.create(localizacao[i].x, localizacao[i].y, localizacao[i].texto:getHeight(), localizacao[i].texto:getWidth(), 255, 255, 255, localizacao[i].nome, 0, false, collision.collisions.textos)
+    end
+end
+
+
+function carregar()
+    deletar_texto()
     if menu_loc == "principal" then
-        for i in pairs(textos.principal) do
-            collision.create(textos.principal[i].x, textos.principal[i].y, textos.principal[i].texto:getHeight(), textos.principal[i].texto:getWidth(), 255, 255, 255, textos.principal[i].nome, 0, false, collision.collisions.textos)
-            print("adicionnado "..i)
-        end
+        adicionar_texto(textos.principal)
+        text_loc = textos.principal
+    elseif menu_loc == "creditos" then
+        adicionar_texto(textos.creditos)
+        text_loc = textos.creditos
     end
 end
 
 function menu.draw()
     local height = love.graphics.getHeight()
+    love.graphics.setBackgroundColor(0, 0, 255)
 
-    love.graphics.draw (textos.principal.jogar.texto, textos.principal.jogar.x, textos.principal.jogar.y, 0, 1, 1, textos.principal.jogar.texto:getWidth()/2, textos.principal.jogar.texto:getHeight()/2)
-    love.graphics.draw (textos.principal.sair.texto, textos.principal.sair.x, textos.principal.sair.y, 0, 1, 1, textos.principal.sair.texto:getWidth()/2, textos.principal.sair.texto:getHeight()/2)
+    for i in pairs(text_loc) do
+        love.graphics.draw(text_loc[i].texto, text_loc[i].x, text_loc[i].y, 0, 1, 1, text_loc[i].texto:getWidth()/2, text_loc[i].texto:getHeight()/2)
+    end
 end
 
 function menu.update()
