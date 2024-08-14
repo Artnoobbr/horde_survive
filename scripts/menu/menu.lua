@@ -81,7 +81,7 @@ function menu.update()
     collision.collisions.mouse[1].ybox = love.mouse.getY()
 
     function love.mousepressed(x, y, button, istouch)
-        if button == 1 then            
+        if button == 1 and menu.main_menu == true then            
             if collision.check(collision.collisions.mouse[1].xbox, collision.collisions.mouse[1].ybox, collision.collisions.mouse[1].wbox, collision.collisions.mouse[1].hbox, collision.collisions.textos) then
                 local id = collision.check(collision.collisions.mouse[1].xbox, collision.collisions.mouse[1].ybox, collision.collisions.mouse[1].wbox, collision.collisions.mouse[1].hbox, collision.collisions.textos)[2]
                 acao_btn(collision.collisions.textos[id].name)

@@ -53,8 +53,6 @@ function  gunner.create(x, y)
     info.rh = 35
     info.id = tools.uuid()
 
-
-
     info.selfdestruct = function ()
         info.sprite = nil
     end
@@ -66,6 +64,8 @@ end
 local timer = 0
 local timer_andando = 0
 
+
+-- Tome cuidado quando for mudar os numeros
 local function create_point(enemy_x, enemy_y, id, random, width, height)
     local info = {}
 
@@ -73,8 +73,8 @@ local function create_point(enemy_x, enemy_y, id, random, width, height)
     local y = enemy_y
 
     if random == true then
-        local x = math.random(-100, 100)
-        local y = math.random(-100, 100)
+        x = math.random(-100, 100)
+        y = math.random(-100, 100)
 
         x = x + enemy_x
         y = y + enemy_y
@@ -97,6 +97,7 @@ local function create_point(enemy_x, enemy_y, id, random, width, height)
         table.remove(collision.collisions.ponto, collision_id)
         return
     end
+
     info.x = x
     info.y = y
     info.id = id
@@ -124,9 +125,8 @@ function gunner.draw()
     end
 end
 
-
 function gunner.update(dt)
-    for i in pairs(gunners) do
+    for i, x in pairs(gunners) do
         local angulo = guns.rotacionar(gunners[i].x, gunners[i].y, true)[1]
         local lado = guns.rotacionar(gunners[i].x, gunners[i].y, true)[2]
         local id_collision = 0
@@ -159,7 +159,7 @@ function gunner.update(dt)
             if gunners[i].andando == false then
                 gunners[i].anim = gunners[i].animations.idle
                 local found = false
-               create_point(gunners[i].x, gunners[i].y, gunners[i].id, true, 10 , 10)
+               create_point(gunners[i].x, gunners[i].y, gunners[i].id, true, 10, 10)
                 for b in pairs(points) do
                     if points[b].id == gunners[i].id then
                         found = true
@@ -212,7 +212,7 @@ function gunner.update(dt)
             end
 
             gunners[i].anim:update(dt)
-        else
+        elseif gunners[i].health <= 0 then
             gunners[i].selfdestruct()
 
             -- Por favor tirar isso da aqui depois
@@ -258,7 +258,7 @@ function gunner.random_create()
     for i in pairs(points) do
         if points[i].id == id then
             print("Point is valid!")
-            gunner.create(300, 500)
+            gunner.create(x, y)
             table.remove(points, i)
             table.remove(collision.collisions.ponto, collision_id)
             cooldown_spawn = 50
