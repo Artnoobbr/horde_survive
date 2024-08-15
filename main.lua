@@ -61,9 +61,8 @@ function love.update(dt)
 
       
 
-      if tools.tablelength(collision.collisions.gunners) > 0 then
-          gunner.update(dt)
-      end
+
+      gunner.update(dt)
 
       guns.bulletupdate(dt)
       gunner.random_create()
@@ -87,10 +86,8 @@ function love.draw()
   if map.active == true then
       player.draw()
 
-      if tools.tablelength(collision.collisions.gunners) > 0 then
-        gunner.draw()
-      end
-
+    
+      gunner.draw()
       if player.status.spawn == true then
         if inventario.guns.pistol.equipado == true then
           pistol.draw()

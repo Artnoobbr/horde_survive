@@ -3,6 +3,7 @@ local gunner = {}
 local gunners = {}
 
 local points = {}
+local spawn_point = {}
 
 local guns = require("scripts.guns.guns")
 
@@ -71,6 +72,9 @@ local function create_point(enemy_x, enemy_y, id, random, width, height)
 
     local x = enemy_x
     local y = enemy_y
+    local table_location = points
+    local table_name = "points"
+    local collision_location = collision.collisions.ponto
 
     if random == true then
         x = math.random(-100, 100)
@@ -78,30 +82,39 @@ local function create_point(enemy_x, enemy_y, id, random, width, height)
 
         x = x + enemy_x
         y = y + enemy_y
+    elseif random == false then
+        info.spawn_image = love.graphics.newImage("images/characters/enemy/spawnpoint.png")
+        info.found_point = false
+        info.can_spawn = false
+        info.timer_spawn = 20
+        table_location = spawn_point
+        collision_location = collision.collisions.spawn_point
+        table_name = "spawn"
     end
 
 
-    local valid = true
 
-
-
-    collision.create(x, y, height, width, 255, 255 ,255, "point", id, false, collision.collisions.ponto)
-    for i in pairs(collision.collisions.ponto) do
-        if id == collision.collisions.ponto[i].id then
+    collision.create(x, y, height, width, 255, 255 ,255, "point", id, false, collision_location)
+    for i in pairs(collision_location) do
+        if id == collision_location[i].id then
             collision_id = i
         end
     end
 
-    if collision.check(collision.collisions.ponto[collision_id].xbox, collision.collisions.ponto[collision_id].ybox, collision.collisions.ponto[collision_id].wbox, collision.collisions.ponto[collision_id].hbox, collision.collisions.paredes) then
+    if collision.check(collision_location[collision_id].xbox, collision_location[collision_id].ybox, collision_location[collision_id].wbox, collision_location[collision_id].hbox, collision.collisions.paredes) then
         print("invalid")
-        table.remove(collision.collisions.ponto, collision_id)
+        table.remove(collision_location, collision_id)
         return
     end
 
     info.x = x
     info.y = y
     info.id = id
-    table.insert(points, info)
+    info.collision_id = collision_id
+    
+    table.insert(table_location, info)
+
+    
 end
 
 
@@ -113,7 +126,6 @@ function gunner.draw()
             love.graphics.draw(gunners[i].gun, gunners[i].x, gunners[i].y , angulo, 1, 1, gunners[i].gun:getWidth()/2,  gunners[i].gun:getHeight()/2)
             love.graphics.print(gunners[i].health, gunners[i].x-3, gunners[i].y-30)
         end
-
         if gunners[i].andando == true then
             for x in pairs(points) do
                 if points[x].id == gunners[i].id then
@@ -123,6 +135,20 @@ function gunner.draw()
             love.graphics.line(gunners[i].x, gunners[i].y, points[point_id].x, points[point_id].y)
         end
     end
+
+    for lol in pairs(spawn_point) do
+        if spawn_point[lol].found_point == true then
+            love.graphics.draw(spawn_point[lol].spawn_image, spawn_point[lol].x, spawn_point[lol].y, 0, 1, 1, spawn_point[lol].spawn_image:getWidth()/2, spawn_point[lol].spawn_image:getHeight()/2)
+            if spawn_point[lol].timer_spawn <= 0 then
+                spawn_point[lol].can_spawn = true
+                spawn_point[lol].found_point = false
+                spawn_point[lol].spawn_image = nil
+            else
+                spawn_point[lol].timer_spawn = spawn_point[lol].timer_spawn - 0.1
+            end
+        end
+    end
+
 end
 
 function gunner.update(dt)
@@ -241,27 +267,29 @@ function gunner.random_create()
     local x = math.random(75, 725)
     local y = math.random(105, 523)
     local id = tools.uuid()
-    local collision_id = 0
 
     if cooldown_spawn <= 0 then
         create_point(x, y, id, false, 30, 30)
+        cooldown_spawn = 500
     else
         cooldown_spawn = cooldown_spawn - 0.1
     end
-    
-    for i in pairs(collision.collisions.ponto) do
-        if collision.collisions.ponto[i].id == id then
-            collision_id = i
-        end
-    end
 
-    for i in pairs(points) do
-        if points[i].id == id then
+    local timer_before_spawn = 10
+    for i in pairs(spawn_point) do
+        if spawn_point[i].id == id then
             print("Point is valid!")
-            gunner.create(x, y)
-            table.remove(points, i)
-            table.remove(collision.collisions.ponto, collision_id)
-            cooldown_spawn = 50
+            spawn_point[i].found_point = true
+            spawn_point_id = i
+        end
+        
+
+        if spawn_point[spawn_point_id].can_spawn == true then
+            gunner.create(spawn_point[spawn_point_id].x, spawn_point[spawn_point_id].y)
+            table.remove(collision.collisions.spawn_point, spawn_point[spawn_point_id].collision_id)
+            table.remove(spawn_point, spawn_point_id)
+            
+            cooldown_spawn = 20
         end
     end
 end
