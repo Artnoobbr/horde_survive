@@ -46,6 +46,14 @@ function collision.create(x, y, height, width, r,g,b ,name, id, destroy, place, 
    
 end
 
+function collision.reset()
+    for i in pairs(collision.collisions) do
+        for x in pairs(collision.collisions[i]) do
+            collision.collisions[i][x] = nil
+        end
+    end
+end
+
 
 -- Aqui ele so vai desenhar o quadrados, para fins de debug
 function collision.draw()

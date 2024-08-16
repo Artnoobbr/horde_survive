@@ -24,18 +24,4 @@ inventario.guns = {
     }
 }
 
-function inventario.hotbar()
-    function love.keypressed(key, scancode, isrepeat)
-        if key == inventario.guns.pistol.tecla and inventario.guns.pistol.equipado == false and inventario.guns.pistol.disponivel == true then
-            inventario.guns.pistol.equipado = true
-            inventario.guns.submachinegun.equipado = false
-        end
-
-        if key == inventario.guns.submachinegun.tecla and inventario.guns.submachinegun.equipado == false and inventario.guns.submachinegun.disponivel == true then
-            inventario.guns.pistol.equipado = false
-            inventario.guns.submachinegun.equipado = true
-        end
-    end
-end
-
 return inventario

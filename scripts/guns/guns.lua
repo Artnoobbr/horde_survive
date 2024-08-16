@@ -209,5 +209,11 @@ function guns.particle(sprite_bullet, point_x, point_y)
     table.insert(particles, info)
 end
 
+function guns.unload()
+    for i in pairs(bullets) do
+        bullets[i] = nil
+    end
+end
+
 
 return guns

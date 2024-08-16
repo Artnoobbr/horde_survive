@@ -58,15 +58,46 @@ local textos = {
             nome = 'voltar'
         }
 
+    },
+    pause = {
+        sair = {
+            texto = love.graphics.newText(monogram, "Sair"),
+            x = width/2,
+            y = 420,
+            nome = "sair"
+        },
+        resumir = {
+            texto = love.graphics.newText(monogram, "Resumir"),
+            x = width/2,
+            y = 220,
+            nome = "resumir"
+        },
+        menu = {
+            texto = love.graphics.newText(monogram, "menu"),
+            x = width/2,
+            y = 320,
+            nome = "menu"
+        },
     }
 }
 
 local menu_loc = "principal"
 local text_loc = textos.principal
+menu.pausado = false
 
-collision.create(mouse.x, mouse.y, 5, 5, 255, 255, 255, "mouse", 0, false, collision.collisions.mouse)
 
-local function deletar_texto()
+
+function menu.criar_mouse()
+    collision.create(mouse.x, mouse.y, 5, 5, 255, 255, 255, "mouse", 0, false, collision.collisions.mouse)
+end
+
+function menu.deletar_mouse()
+    table.remove(collision.collisions.mouse, 1)
+end
+
+menu.criar_mouse()
+
+function menu.deletar_texto()
     for i in pairs(collision.collisions.textos) do
 
         -- Quando for remover tudo de uma lista usar o nil
@@ -82,14 +113,22 @@ local function acao_btn(name)
     if name == "sair" then
         love.event.quit()
     elseif name == "jogar" then
-        deletar_texto()
-        table.remove(collision.collisions.mouse, 1)
+        menu.deletar_texto()
+        menu.deletar_mouse()
         menu.main_menu = false
     elseif name == "creditos" then
         menu_loc = "creditos"
         carregar()
     elseif name == "voltar" then
         menu_loc = "principal"
+        carregar()
+    elseif name == "resumir" then
+        menu.pausado = false
+    elseif name == "menu" then
+        menu.pausado = false
+        menu.main_menu = true
+        collision.reset()
+        menu.criar_mouse()
         carregar()
     end
 end
@@ -103,7 +142,7 @@ end
 
 
 function carregar()
-    deletar_texto()
+    menu.deletar_texto()
     if menu_loc == "principal" then
         adicionar_texto(textos.principal)
         text_loc = textos.principal
@@ -127,12 +166,24 @@ function menu.update()
     collision.collisions.mouse[1].ybox = love.mouse.getY()
 
     function love.mousepressed(x, y, button, istouch)
-        if button == 1 and menu.main_menu == true then            
+        if button == 1 and (menu.main_menu == true or menu.pausado == true) then          
             if collision.check(collision.collisions.mouse[1].xbox, collision.collisions.mouse[1].ybox, collision.collisions.mouse[1].wbox, collision.collisions.mouse[1].hbox, collision.collisions.textos) then
                 local id = collision.check(collision.collisions.mouse[1].xbox, collision.collisions.mouse[1].ybox, collision.collisions.mouse[1].wbox, collision.collisions.mouse[1].hbox, collision.collisions.textos)[2]
                 acao_btn(collision.collisions.textos[id].name)
             end
         end
+    end
+end
+
+function menu.pause()
+    if menu.pausado == true then
+        menu.criar_mouse()
+        adicionar_texto(textos.pause)
+        text_loc = textos.pause
+        menu.update()
+    else
+        menu.deletar_mouse()
+        menu.deletar_texto()
     end
 end
 

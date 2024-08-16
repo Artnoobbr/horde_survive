@@ -1,6 +1,7 @@
 local pistol = {}
 
 local player = require("scripts.player.player")
+local menu   = require("scripts.menu.menu")
 
 local guns = require("scripts.guns.guns")
 
@@ -53,15 +54,18 @@ function pistol.update(dt)
 
 
     stats.scaleY = guns.flipimage(stats.scaleY)
-    function love.mousepressed(x, y, button, istouch)
-        if button == 1 and timer <= 0 and inventario.guns.pistol.municao > 0 and inventario.guns.pistol.equipado == true then
-            shoot:play()
-            guns.bullet_create(barrel_point[1], barrel_point[2], stats.bullet, guns.rotacionar(coords.x, coords.y)[1], 1, "player")
-            guns.particle(stats.bullet_exit, exitbullet_point[1], exitbullet_point[2])
-            inventario.guns.pistol.municao = inventario.guns.pistol.municao - 1
-            timer = 0.8
+    if menu.pausado == false then
+        function love.mousepressed(x, y, button, istouch)
+            if button == 1 and timer <= 0 and inventario.guns.pistol.municao > 0 and inventario.guns.pistol.equipado == true then
+                shoot:play()
+                guns.bullet_create(barrel_point[1], barrel_point[2], stats.bullet, guns.rotacionar(coords.x, coords.y)[1], 1, "player")
+                guns.particle(stats.bullet_exit, exitbullet_point[1], exitbullet_point[2])
+                inventario.guns.pistol.municao = inventario.guns.pistol.municao - 1
+                timer = 0.8
+            end
         end
     end
+
 
 
     if love.keyboard.isDown("r") and inventario.guns.pistol.municao < stats.max_ammo and inventario.guns.pistol.regarregando == false then

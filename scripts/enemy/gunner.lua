@@ -22,8 +22,11 @@ local stats = {
     health = 20,
     damage = 1,
     scaleX = 2,
-    scaleY = 2
+    scaleY = 2,
 }
+gunner.quantidade_spawns = 0
+gunner.mortos = 0
+
 local enemy_sheet = love.graphics.newImage("images/characters/player/player-sheet.png")
 local enemy_grid = anim8.newGrid(24, 25, enemy_sheet:getWidth(), enemy_sheet:getHeight())
 
@@ -148,6 +151,8 @@ function gunner.draw()
             end
         end
     end
+    love.graphics.print("Spawns total "..gunner.quantidade_spawns, 520, 95)
+    love.graphics.print("Mortos "..gunner.mortos, 660, 95)
 
 end
 
@@ -257,11 +262,13 @@ function gunner.update(dt)
             table.remove(gunners, i)
             table.remove(points, point_id)
             table.remove(collision.collisions.ponto, collision_id)
+            gunner.mortos = gunner.mortos + 1
         end
     end
 end
 
 local cooldown_spawn = 20
+
 
 function gunner.random_create()
     local x = math.random(75, 725)
@@ -270,7 +277,7 @@ function gunner.random_create()
 
     if cooldown_spawn <= 0 then
         create_point(x, y, id, false, 30, 30)
-        cooldown_spawn = 500
+        cooldown_spawn = 50
     else
         cooldown_spawn = cooldown_spawn - 0.1
     end
@@ -288,11 +295,26 @@ function gunner.random_create()
             gunner.create(spawn_point[spawn_point_id].x, spawn_point[spawn_point_id].y)
             table.remove(collision.collisions.spawn_point, spawn_point[spawn_point_id].collision_id)
             table.remove(spawn_point, spawn_point_id)
+            gunner.quantidade_spawns = gunner.quantidade_spawns + 1
             
             cooldown_spawn = 20
         end
     end
 end
 
+
+function gunner.unload()
+    for i in pairs(gunners) do
+        gunner[i] = nil
+    end
+
+    for i in pairs(spawn_point) do
+        spawn_point[i] = nil
+    end
+
+    for i in pairs(points) do
+        points[i] = nil
+    end
+end
 
 return gunner

@@ -24,6 +24,11 @@ function map.load()
     map.loaded = true
 end
 
+function map.unload()
+    sti:flush()
+    map.loaded = false
+end
+
 function map.collision_bullets()
     for i in pairs(collision.collisions.paredes) do
         local col = collision.collisions.paredes[i]
