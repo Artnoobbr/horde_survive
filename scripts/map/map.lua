@@ -5,7 +5,7 @@ local sti = require("lib.sti")
 local collision = require("scripts.collision.collision")
 
 package.path = "./scripts/tools/tools.lua"
-local tools = require("tools")
+local tools = require("scripts.tools.tools")
 
 map.loaded = false
 map.active = false

@@ -13,7 +13,7 @@ local menu = require("scripts.menu.menu")
 local width, height = love.graphics.getDimensions()
 
 player.status = {
-    speed = 5,
+    speed = 3,
     Character = love.graphics.newImage("images/characters/robert.png"),
     health = 20,
     scaleX = 2,

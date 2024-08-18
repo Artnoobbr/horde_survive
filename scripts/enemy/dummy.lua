@@ -11,7 +11,7 @@ local stats = {
 }
 
 package.path = "./scripts/tools/tools.lua"
-local tools = require("tools")
+local tools = require("scripts.tools.tools")
 
 
 function dummy.create (x, y)
