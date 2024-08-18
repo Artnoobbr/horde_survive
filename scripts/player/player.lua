@@ -13,7 +13,7 @@ local menu = require("scripts.menu.menu")
 local width, height = love.graphics.getDimensions()
 
 player.status = {
-    speed = 1,
+    speed = 5,
     Character = love.graphics.newImage("images/characters/robert.png"),
     health = 20,
     scaleX = 2,
@@ -143,11 +143,11 @@ function player.update(dt)
                 end
 
                 if ws == true then
-                    coords.x = coords.x - d.x
+                    coords.x = coords.x - ( player.status.speed * d.x)
                 end
 
                 if ad == true then
-                    coords.y = coords.y - d.y
+                    coords.y = coords.y - (player.status.speed * d.y)
                 end
 
             end

@@ -63,7 +63,12 @@ function love.update(dt)
       end
 
       if menu.pausado == false then
-        gunner.update(dt)
+
+        if tools.tablelength(collision.collisions.gunners) > 0 then
+          gunner.update(dt)
+        end
+        
+        gunner.spawn_update()
         guns.bulletupdate(dt)
         player.update(dt)
         ondas.update(dt)
@@ -91,6 +96,7 @@ function love.draw()
       map.drawmap()
   end
 
+
   if map.active == true then
       player.draw()
 
@@ -98,8 +104,12 @@ function love.draw()
         menu.draw()
       end
 
-    
-      gunner.draw()
+      if tools.tablelength(collision.collisions.gunners) > 0 then
+        gunner.draw()
+      end
+
+      gunner.spanw_draw()
+      
       if player.status.spawn == true then
         if inventario.guns.pistol.equipado == true then
           pistol.draw()

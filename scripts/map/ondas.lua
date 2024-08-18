@@ -60,6 +60,7 @@ function ondas.reset()
     onda.onda_atual = 1
     gunners.mortos = 0
     gunners.quantidade_spawns = 0
+    onda.onda_em_progresso = false
 end
 
 return ondas

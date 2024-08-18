@@ -135,26 +135,18 @@ function gunner.draw()
                     point_id = x
                 end
             end
+            print(points[point_id])
+            print("Point ID ", point_id)
             love.graphics.line(gunners[i].x, gunners[i].y, points[point_id].x, points[point_id].y)
         end
     end
 
-    for lol in pairs(spawn_point) do
-        if spawn_point[lol].found_point == true then
-            love.graphics.draw(spawn_point[lol].spawn_image, spawn_point[lol].x, spawn_point[lol].y, 0, 1, 1, spawn_point[lol].spawn_image:getWidth()/2, spawn_point[lol].spawn_image:getHeight()/2)
-            if spawn_point[lol].timer_spawn <= 0 then
-                spawn_point[lol].can_spawn = true
-                spawn_point[lol].found_point = false
-                spawn_point[lol].spawn_image = nil
-            else
-                spawn_point[lol].timer_spawn = spawn_point[lol].timer_spawn - 0.1
-            end
-        end
-    end
+
     love.graphics.print("Spawns total "..gunner.quantidade_spawns, 520, 95)
     love.graphics.print("Mortos "..gunner.mortos, 660, 95)
 
 end
+
 
 function gunner.update(dt)
     for i, x in pairs(gunners) do
@@ -267,6 +259,32 @@ function gunner.update(dt)
     end
 end
 
+
+function gunner.spawn_update()
+    for lol in pairs(spawn_point) do
+        if spawn_point[lol].found_point == true then
+            if spawn_point[lol].timer_spawn <= 0 then
+                spawn_point[lol].can_spawn = true
+                spawn_point[lol].found_point = false
+                spawn_point[lol].spawn_image = nil
+            else
+                spawn_point[lol].timer_spawn = spawn_point[lol].timer_spawn - 0.1
+            end
+        end
+    end
+end
+
+function  gunner.spanw_draw()
+    print(tools.tablelength(collision.collisions.gunners))
+    for lol in pairs(spawn_point) do
+        if spawn_point[lol].found_point == true then
+            love.graphics.draw(spawn_point[lol].spawn_image, spawn_point[lol].x, spawn_point[lol].y, 0, 1, 1, spawn_point[lol].spawn_image:getWidth()/2, spawn_point[lol].spawn_image:getHeight()/2)
+        end
+    end
+end
+
+
+
 local cooldown_spawn = 20
 
 
@@ -305,7 +323,7 @@ end
 
 function gunner.unload()
     for i in pairs(gunners) do
-        gunner[i] = nil
+        gunners[i] = nil
     end
 
     for i in pairs(spawn_point) do
