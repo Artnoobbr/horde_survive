@@ -1,14 +1,13 @@
 local player = {}
 
 local collision = require("scripts.collision.collision")
+local menu      = require("scripts.menu.menu")
 local collisions = collision.collisions
 
 local global = require("scripts.global")
 
 local anim8 = require("lib.anim8.anim8")
 love.graphics.setDefaultFilter("nearest", "nearest")
-
-local menu = require("scripts.menu.menu")
 
 local width, height = love.graphics.getDimensions()
 
@@ -18,7 +17,9 @@ player.status = {
     health = 20,
     scaleX = 2,
     scaleY = 2,
-    spawn = false
+    spawn = false,
+    morto = false,
+    timer_morto = 0.75
 }
 
 local player_sheet = love.graphics.newImage("images/characters/player/player-sheet.png")
@@ -27,6 +28,7 @@ local player_grid = anim8.newGrid(24, 25, player_sheet:getWidth(), player_sheet:
 local player_animations = {
     idle = anim8.newAnimation(player_grid('1-2', 1), 2),
     movimento = anim8.newAnimation(player_grid('1-4', 2), 0.2),
+    morrendo = anim8.newAnimation(player_grid('6-8',5), 0.25)
 }
 
 player_animations.anim = player_animations.idle
@@ -69,34 +71,37 @@ function player.update(dt)
 
         local angulo = math.atan2(playerY-mouseY, playerX-mouseX)
 
-        if (angulo > 1.6 or angulo < -1.6) then
-            if player.status.scaleX < 0 then
-                player.status.scaleX = -(player.status.scaleX)
-            end
-        else
-            if player.status.scaleX > 0 then
-                player.status.scaleX = -(player.status.scaleX)
+        if player.status.morto == false then
+            if (angulo > 1.6 or angulo < -1.6) then
+                if player.status.scaleX < 0 then
+                    player.status.scaleX = -(player.status.scaleX)
+                end
+            else
+                if player.status.scaleX > 0 then
+                    player.status.scaleX = -(player.status.scaleX)
+                end
             end
         end
+ 
 
 
         -- NÃO USE ELSEIF NO MOVIMENTO
-        if love.keyboard.isDown("w") then  
+        if love.keyboard.isDown("w") and player.status.morto == false then  
             d.y = d.y - 1
             movimentando = true
         end
 
-        if love.keyboard.isDown("s") then
+        if love.keyboard.isDown("s") and player.status.morto == false then
             d.y = d.y + 1
             movimentando = true
         end
 
-        if love.keyboard.isDown("a") then 
+        if love.keyboard.isDown("a") and player.status.morto == false then 
             d.x = d.x - 1
             movimentando = true
         end
 
-        if love.keyboard.isDown("d") then 
+        if love.keyboard.isDown("d") and player.status.morto == false then 
             d.x = d.x + 1
             movimentando = true
         end
@@ -167,12 +172,26 @@ function player.update(dt)
             player_animations.anim = player_animations.idle
         end
 
-    player_animations.anim:update(dt)
+        if player.status.health <= 0 then
+            player.status.morto = true
+            player_animations.anim = player_animations.morrendo
+            movimentando = false
+            player.status.timer_morto = player.status.timer_morto - dt
+
+            if player.status.timer_morto <= 0 then
+                player_animations.anim:gotoFrame(3)
+                menu.pausado = true
+            end
+        end
+
+        
 
         if collision.check(collisions.player[1].xbox, collisions.player[1].ybox, collisions.player[1].wbox, collisions.player[1].hbox, collisions.bullets, "enemy") then
             local id = collision.check(collisions.player[1].xbox, collisions.player[1].ybox, collisions.player[1].wbox, collisions.player[1].hbox, collisions.bullets, "enemy")[2]
             player.status.health = player.status.health - collisions.bullets[id].damage
         end 
+
+        player_animations.anim:update(dt)
     end
 end
 
@@ -187,7 +206,15 @@ function player.draw()
     
         love.graphics.print(pl_x, 400, 15)
         love.graphics.print(pl_y, 580, 15)
+
     end
+end
+
+function player.reset()
+    player.status.morto = false
+    player.status.spawn = false
+    player.status.health = 20
+    player.status.timer_morto = 0.75
 end
 
 

@@ -4,6 +4,7 @@
 local player = require "scripts.player.player"
 local inventario = require("scripts.player.inventario")
 local teclado = require("scripts.player.teclado")
+local mouse = require("scripts.player.mouse")
 
 local tools      = require("scripts.tools.tools")
 
@@ -40,6 +41,7 @@ local global = require("scripts.global")
 
 
 function love.update(dt)
+  mouse.update()
   if menu.main_menu == true then
       menu.update()
       map.active = false
@@ -48,6 +50,7 @@ function love.update(dt)
       map.unload()
       guns.unload()
       gunner.unload()
+      player.reset()
   end
 
   if map.loaded == false and menu.main_menu == false then
@@ -56,7 +59,13 @@ function love.update(dt)
 
   if map.active == true then
       map.collision_bullets()
-      menu.pause()
+
+      if player.status.morto == true then
+        menu.pause('player', ondas.score.ondas_sobrevividas, ondas.score.inimigos_mortos)
+      else
+        menu.pause('esc', 0, 0)
+      end
+      
       teclado.update()
       if player.status.spawn == false then
           player.spawn(500, 500)
@@ -73,7 +82,7 @@ function love.update(dt)
         player.update(dt)
         ondas.update(dt)
 
-        if player.status.spawn == true then
+        if player.status.spawn == true and player.status.morto == false then
           if inventario.guns.pistol.equipado == true then
             pistol.update(dt)
           elseif inventario.guns.submachinegun.equipado == true then
@@ -110,7 +119,7 @@ function love.draw()
 
       gunner.spanw_draw()
       
-      if player.status.spawn == true then
+      if player.status.spawn == true and player.status.morto == false then
         if inventario.guns.pistol.equipado == true then
           pistol.draw()
         elseif inventario.guns.submachinegun.equipado == true then

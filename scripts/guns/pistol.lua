@@ -1,13 +1,11 @@
 local pistol = {}
 
 local player = require("scripts.player.player")
-local menu   = require("scripts.menu.menu")
 
 local guns = require("scripts.guns.guns")
 
 local inventario = require("scripts.player.inventario")
 
-local shoot = love.audio.newSource("sounds/guns/pistol/pistol.wav", "static")
 local reload = love.audio.newSource("sounds/guns/pistol/pistolreload.mp3", "static")
 
 local width, height = love.graphics.getDimensions()
@@ -17,12 +15,16 @@ coords = {
     y = player.coords.y
 }
 
+pistol.stats_global = {
+    bullet = "images/guns/pistol/bullet.png",
+    bullet_exit = love.graphics.newImage("images/guns/pistol/PistolAmmoSmall.png"),
+    shoot = love.audio.newSource("sounds/guns/pistol/pistol.wav", "static")
+}
+
 local stats = {
     offsetX = 2,
     offsetY = 11,
     idle = love.graphics.newImage("images/guns/pistol/M92.png"),
-    bullet = "images/guns/pistol/bullet.png",
-    bullet_exit = love.graphics.newImage("images/guns/pistol/PistolAmmoSmall.png"),
     damage = 1,
     max_ammo = 10,
 
@@ -35,7 +37,7 @@ local stats = {
     offsetY_exit = 6
 }
 
-local timer = 0
+pistol.timer = 0
 local timer_reload
 
 
@@ -49,38 +51,25 @@ end
 function pistol.update(dt)
 
     Angulo = guns.rotacionar(coords.x, coords.y)[1]
-    local barrel_point = guns.point(coords.x + stats.offsetX_Barrel, coords.y + stats.offsetY_Barrel, 10, Angulo)
-    local exitbullet_point = guns.point(coords.x + stats.offsetX_exit, coords.y + stats.offsetY_exit, 0, Angulo )
+    pistol.barrel_point = guns.point(coords.x + stats.offsetX_Barrel, coords.y + stats.offsetY_Barrel, 10, Angulo)
+    pistol.exitbullet_point = guns.point(coords.x + stats.offsetX_exit, coords.y + stats.offsetY_exit, 0, Angulo )
 
 
     stats.scaleY = guns.flipimage(stats.scaleY)
-    if menu.pausado == false then
-        function love.mousepressed(x, y, button, istouch)
-            if button == 1 and timer <= 0 and inventario.guns.pistol.municao > 0 and inventario.guns.pistol.equipado == true then
-                shoot:play()
-                guns.bullet_create(barrel_point[1], barrel_point[2], stats.bullet, guns.rotacionar(coords.x, coords.y)[1], 1, "player")
-                guns.particle(stats.bullet_exit, exitbullet_point[1], exitbullet_point[2])
-                inventario.guns.pistol.municao = inventario.guns.pistol.municao - 1
-                timer = 0.8
-            end
-        end
-    end
-
-
 
     if love.keyboard.isDown("r") and inventario.guns.pistol.municao < stats.max_ammo and inventario.guns.pistol.regarregando == false then
         reload:play()
-        timer = 2.5
+        pistol.timer = 2.5
         inventario.guns.pistol.regarregando = true
     end
 
-    if inventario.guns.pistol.regarregando == true and timer <= 0 then
+    if inventario.guns.pistol.regarregando == true and pistol.timer <= 0 then
         guns.reload(inventario.guns.pistol, stats.max_ammo)
         inventario.guns.pistol.regarregando = false
     end
 
-    if timer > 0 then
-        timer = timer - dt
+    if pistol.timer > 0 then
+        pistol.timer = pistol.timer - dt
     end
 end
 

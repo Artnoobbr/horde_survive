@@ -48,7 +48,7 @@ function submachinegun.update(dt)
 
     if love.mouse.isDown(1) and timer <= 0  and inventario.guns.submachinegun.municao > 0 and inventario.guns.submachinegun.equipado == true then
         shoot:play()
-        guns.bullet_create(barrel_point[1], barrel_point[2], stats.bullet, guns.rotacionar(coords.x, coords.y)[1], 1.5, "player")
+        guns.bullet_create(barrel_point[1], barrel_point[2], stats.bullet, guns.rotacionar(coords.x, coords.y)[1], stats.damage, "player")
         guns.particle(stats.bullet_exit, exit_point[1], exit_point[2])
         inventario.guns.submachinegun.municao = inventario.guns.submachinegun.municao - 1
         timer = 0.32

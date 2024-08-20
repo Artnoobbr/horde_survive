@@ -2,45 +2,68 @@ local ondas = {}
 
 local gunners = require("scripts.enemy.gunner")
 local tools   = require("scripts.tools.tools")
-local player = require("scripts.player.player")
 
 local width = love.graphics.getWidth()
 local height = love.graphics.getHeight()
 
 local monogram = love.graphics.newFont("fonts/monogram/ttf/monogram.ttf", 40)
 
-local onda = {}
-
 local status = {
     matou = 0
 }
 
-onda[1] = {
-    max_inimigos = 5
-}
-onda[2] = {
-    max_inimigos = 7
+
+local onda = {
+    vida_inicial = 5,
+    velocidade_inicial = 20,
+    dano_incial = 1,
+    quantidade_padrao = 5,
+    onda_atual = 1,
+    onda_em_progresso = false
 }
 
-onda.onda_atual = 1
-onda.onda_em_progresso = false
+local multiplicador = {
+    vida_multiplicador = 1,
+    velocidade_multiplicador = 1,
+    dano_multiplicador = 1,
+    quantidade_multiplicador = 1
+}
 
+ondas.score = {
+    ondas_sobrevividas = 0,
+    inimigos_mortos = 0
+}
 
 local tempo_texto = 20
 
+-- TODO: Ondas infinitas
+
 function ondas.update(dt)
     if onda.onda_em_progresso == true then
-       if gunners.quantidade_spawns < onda[onda.onda_atual].max_inimigos then
-            gunners.random_create()
+       if gunners.quantidade_spawns < onda.quantidade_padrao then
+            gunners.random_create(onda.velocidade_inicial, onda.vida_inicial, onda.dano_incial)
        end
 
-       if gunners.mortos >= onda[onda.onda_atual].max_inimigos then
+       if gunners.mortos >= onda.quantidade_padrao then
             tempo_texto = 20
             onda.onda_atual = onda.onda_atual + 1
+            ondas.score.ondas_sobrevividas = ondas.score.ondas_sobrevividas + 1
+            ondas.score.inimigos_mortos = ondas.score.inimigos_mortos + gunners.mortos
             status.matou = gunners.mortos
             gunners.mortos = 0
             gunners.quantidade_spawns = 0
             onda.onda_em_progresso = false
+
+            multiplicador.dano_multiplicador = multiplicador.dano_multiplicador + 0.10
+            multiplicador.quantidade_multiplicador = multiplicador.quantidade_multiplicador + 0.5
+            multiplicador.velocidade_multiplicador = multiplicador.velocidade_multiplicador + 0.1
+            multiplicador.vida_multiplicador = multiplicador.vida_multiplicador + 0.5
+
+            onda.dano_incial = onda.dano_incial * multiplicador.dano_multiplicador
+            onda.vida_inicial = onda.vida_inicial * multiplicador.vida_multiplicador
+            onda.quantidade_padrao = onda.quantidade_padrao * multiplicador.quantidade_multiplicador
+            onda.velocidade_inicial = onda.velocidade_inicial * multiplicador.velocidade_multiplicador
+            
        end
     end
 end
@@ -61,6 +84,19 @@ function ondas.reset()
     gunners.mortos = 0
     gunners.quantidade_spawns = 0
     onda.onda_em_progresso = false
+
+    onda.dano_incial = 100
+    onda.vida_inicial = 5
+    onda.velocidade_inicial = 20
+    onda.quantidade_padrao = 5
+    
+    for i in pairs(multiplicador) do
+        multiplicador[i] = 1
+    end
+
+    ondas.score.ondas_sobrevividas = 0
+    ondas.score.inimigos_mortos = 0
+
 end
 
 return ondas

@@ -30,19 +30,19 @@ gunner.mortos = 0
 local enemy_sheet = love.graphics.newImage("images/characters/player/player-sheet.png")
 local enemy_grid = anim8.newGrid(24, 25, enemy_sheet:getWidth(), enemy_sheet:getHeight())
 
-function  gunner.create(x, y)
+function  gunner.create(x, y, vida, velocidade, dano)
     local info = {}
-    info.health = stats.health
+    info.health = vida
     info.sprite = stats.sprite
     info.gun = stats.gun
     info.gun_scaleX = 1.2
     info.gun_scaleY = 1.2
     info.bullet = stats.gun
-    info.damage = stats.damage
+    info.damage = dano
     info.x = x
     info.y = y
     info.andando = false
-    info.speed = 20
+    info.speed = velocidade
     info.scaleX = stats.scaleX
     info.scaleY = stats.scaleY
     info.animations = {
@@ -135,8 +135,11 @@ function gunner.draw()
                     point_id = x
                 end
             end
-            print(points[point_id])
-            print("Point ID ", point_id)
+
+            if point_id == nil then
+                print("Point id nil Error!")
+                return
+            end
             love.graphics.line(gunners[i].x, gunners[i].y, points[point_id].x, points[point_id].y)
         end
     end
@@ -275,7 +278,6 @@ function gunner.spawn_update()
 end
 
 function  gunner.spanw_draw()
-    print(tools.tablelength(collision.collisions.gunners))
     for lol in pairs(spawn_point) do
         if spawn_point[lol].found_point == true then
             love.graphics.draw(spawn_point[lol].spawn_image, spawn_point[lol].x, spawn_point[lol].y, 0, 1, 1, spawn_point[lol].spawn_image:getWidth()/2, spawn_point[lol].spawn_image:getHeight()/2)
@@ -288,7 +290,7 @@ end
 local cooldown_spawn = 20
 
 
-function gunner.random_create()
+function gunner.random_create(velocidade, vida, dano)
     local x = math.random(75, 725)
     local y = math.random(105, 523)
     local id = tools.uuid()
@@ -310,7 +312,7 @@ function gunner.random_create()
         
 
         if spawn_point[spawn_point_id].can_spawn == true then
-            gunner.create(spawn_point[spawn_point_id].x, spawn_point[spawn_point_id].y)
+            gunner.create(spawn_point[spawn_point_id].x, spawn_point[spawn_point_id].y, vida, velocidade, dano)
             table.remove(collision.collisions.spawn_point, spawn_point[spawn_point_id].collision_id)
             table.remove(spawn_point, spawn_point_id)
             gunner.quantidade_spawns = gunner.quantidade_spawns + 1

@@ -16,6 +16,11 @@ local mouse = {
     y = 0
 }
 
+local pontuacao = {
+   ondas = 0,
+   inimigos_mortos = 0
+}
+
 local textos = {
     principal = {
         titulo = {
@@ -77,7 +82,27 @@ local textos = {
             x = width/2,
             y = 320,
             nome = "menu"
+        }
+    },
+    morto = {
+        pontuacao = {
+            texto = love.graphics.newText(monogram, "Voce sobreviveu a "..pontuacao.ondas ),
+            x = width/2,
+            y = 220,
+            nome = "resumir"
         },
+        menu = {
+            texto = love.graphics.newText(monogram, "menu"),
+            x = width/2,
+            y = 320,
+            nome = "menu"
+        },
+        sair = {
+            texto = love.graphics.newText(monogram, "Sair do jogo"),
+            x = width/2,
+            y = 420,
+            nome = "sair"
+        }
     }
 }
 
@@ -175,11 +200,19 @@ function menu.update()
     end
 end
 
-function menu.pause()
-    if menu.pausado == true then
+function menu.pause(type, ondas, mortos)
+    if menu.pausado == true and type == 'esc' then
         menu.criar_mouse()
         adicionar_texto(textos.pause)
         text_loc = textos.pause
+        menu.update()
+    
+    elseif menu.pausado == true and type == 'player' then
+        menu.criar_mouse()
+        adicionar_texto(textos.morto)
+        text_loc = textos.morto
+        pontuacao.ondas = ondas
+        pontuacao.inimigos_mortos = mortos
         menu.update()
     else
         menu.deletar_mouse()

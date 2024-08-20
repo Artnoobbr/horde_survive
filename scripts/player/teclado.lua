@@ -2,12 +2,13 @@ local teclado = {}
 
 local inventario = require("scripts.player.inventario")
 local menu       = require("scripts.menu.menu")
+local player     = require("scripts.player.player")
 
 
 function teclado.update()
     function love.keypressed(key, scancode, isrepeat)
 
-        if key == "escape" then
+        if key == "escape" and player.status.morto == false then
            menu.pausado = not menu.pausado
         end
 
