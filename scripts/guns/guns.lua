@@ -58,8 +58,12 @@ function guns.rotacionar(gun_x, gun_y, playerS, mouseXplayer)
     return {angulo, lado}
 end
 
-function guns.flipimage(scaleXorY)
+function guns.flipimage(scaleXorY, enemy, enemy_x, enemy_y)
     local lado = guns.rotacionar(0, 0, false, true)[2]
+
+    if enemy == true then
+        lado = guns.rotacionar(enemy_x, enemy_y, true, false)[2]
+    end
     
     if lado == "esquerda" and scaleXorY > 0 then
         scaleXorY = -(scaleXorY)
@@ -115,21 +119,23 @@ function guns.bullet_create(gun_x, gun_y, sprite, rotation, damage, type)
 
 end
 
-function guns.bulletdraw()
+function guns.bullet_draw()
     for i in pairs(bullets) do
         love.graphics.draw(bullets[i].sprite, bullets[i].x, bullets[i].y, bullets[i].rotation, 1, 1, bullets[i].sprite:getWidth()/2,  bullets[i].sprite:getHeight()/2)
     end
 
+    --love.graphics.print("Balas: "..tools.tablelength(bullets), 400, 65)
+    --love.graphics.print("Colisões de bala: "..tools.tablelength(collisions.bullets), 400, 80)
+    --love.graphics.print("Particulas Balas: "..tools.tablelength(particles), 400, 95)
+end
+
+function guns.particle_draw()
     for i in pairs(particles) do
         love.graphics.draw(particles[i].sprite, particles[i].x, particles[i].y, 0 , particles[i].scaleX, particles[i].scaleY, particles[i].sprite:getWidth()/2, particles[i].sprite:getHeight()/2)
     end
-
-    love.graphics.print("Balas: "..tools.tablelength(bullets), 400, 65)
-    love.graphics.print("Colisões de bala: "..tools.tablelength(collisions.bullets), 400, 80)
-    love.graphics.print("Particulas Balas: "..tools.tablelength(particles), 400, 95)
 end
 
-function guns.bulletupdate(dt)
+function guns.bullet_update(dt)
 
     -- Aqui ele faz o processo de desenhar a imagem e fazer ela se mover
     -- e depois deletar quando atingir um alvo
@@ -167,20 +173,23 @@ function guns.bulletupdate(dt)
 
     --Carrega a particula da bala
     -- TODO: Ajeitar a "animação da bala" e variar também a posição que ela vai cair
+end
+
+function guns.particle_update()
     for i in pairs(particles) do
 
-        if particles[i].timer > 0 then
-            particles[i].timer = particles[i].timer - 0.1
-            if particles[i].durationY > 0 then
-                particles[i].durationY = particles[i].durationY - 0.5
-                particles[i].y = particles[i].y + 2
-            end
-        else
-            particles[i].selfdestruct()
-            table.remove(particles, i)
-            collectgarbage()
+    if particles[i].timer > 0 then
+        particles[i].timer = particles[i].timer - 0.1
+        if particles[i].durationY > 0 then
+            particles[i].durationY = particles[i].durationY - 0.5
+            particles[i].y = particles[i].y + 2
         end
+    else
+        particles[i].selfdestruct()
+        table.remove(particles, i)
+        collectgarbage()
     end
+end
 end
 
 function guns.reload(gun_location, max_ammo, duration)
@@ -193,7 +202,7 @@ function guns.reload(gun_location, max_ammo, duration)
 end
 
 
-function guns.particle(sprite_bullet, point_x, point_y)
+function guns.particle(sprite_bullet, point_x, point_y, enemy, scaleY)
     local info = {}
     info.x = point_x
     info.y = point_y
@@ -201,6 +210,9 @@ function guns.particle(sprite_bullet, point_x, point_y)
     info.timer = 15
     info.durationY = 5
     info.scaleX = guns.flipimage(1)
+    if enemy == true then
+        info.scaleX = -scaleY + 0.2
+    end
     info.scaleY = 1
     info.selfdestruct = function ()
         info.sprite_bullet = nil
@@ -212,6 +224,10 @@ end
 function guns.unload()
     for i in pairs(bullets) do
         bullets[i] = nil
+    end
+
+    for i in pairs(particles) do
+        particles[i] = nil
     end
 end
 

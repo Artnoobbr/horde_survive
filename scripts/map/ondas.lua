@@ -48,6 +48,7 @@ function ondas.update(dt)
             tempo_texto = 20
             onda.onda_atual = onda.onda_atual + 1
             ondas.score.ondas_sobrevividas = ondas.score.ondas_sobrevividas + 1
+            print(ondas.score.ondas_sobrevividas)
             ondas.score.inimigos_mortos = ondas.score.inimigos_mortos + gunners.mortos
             status.matou = gunners.mortos
             gunners.mortos = 0
@@ -85,7 +86,7 @@ function ondas.reset()
     gunners.quantidade_spawns = 0
     onda.onda_em_progresso = false
 
-    onda.dano_incial = 100
+    onda.dano_incial = 1
     onda.vida_inicial = 5
     onda.velocidade_inicial = 20
     onda.quantidade_padrao = 5

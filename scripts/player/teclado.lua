@@ -16,11 +16,13 @@ function teclado.update()
             if key == inventario.guns.pistol.tecla and inventario.guns.pistol.equipado == false and inventario.guns.pistol.disponivel == true then
                 inventario.guns.pistol.equipado = true
                 inventario.guns.submachinegun.equipado = false
+                inventario.location = inventario.guns.pistol
             end
     
             if key == inventario.guns.submachinegun.tecla and inventario.guns.submachinegun.equipado == false and inventario.guns.submachinegun.disponivel == true then
                 inventario.guns.pistol.equipado = false
                 inventario.guns.submachinegun.equipado = true
+                inventario.location = inventario.guns.submachinegun
             end
         end
 

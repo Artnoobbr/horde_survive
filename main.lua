@@ -38,6 +38,11 @@ local collision = require("scripts.collision.collision")
 
 local global = require("scripts.global")
 
+local width = love.graphics.getWidth()
+local height = love.graphics.getHeight()
+
+love.window.setTitle("Horde Survive")
+
 
 
 function love.update(dt)
@@ -51,6 +56,7 @@ function love.update(dt)
       guns.unload()
       gunner.unload()
       player.reset()
+      inventario.reset()
   end
 
   if map.loaded == false and menu.main_menu == false then
@@ -68,7 +74,7 @@ function love.update(dt)
       
       teclado.update()
       if player.status.spawn == false then
-          player.spawn(500, 500)
+          player.spawn(width/2, height/2)
       end
 
       if menu.pausado == false then
@@ -78,7 +84,8 @@ function love.update(dt)
         end
         
         gunner.spawn_update()
-        guns.bulletupdate(dt)
+        guns.bullet_update(dt)
+        guns.particle_update()
         player.update(dt)
         ondas.update(dt)
 
@@ -107,7 +114,9 @@ function love.draw()
 
 
   if map.active == true then
+      guns.particle_draw()
       player.draw()
+      inventario.draw()
 
       if menu.pausado == true then
         menu.draw()
@@ -128,7 +137,7 @@ function love.draw()
       end
       
       ondas.draw()
-      guns.bulletdraw()
+      guns.bullet_draw()
   end
 
   if global.debug == true then

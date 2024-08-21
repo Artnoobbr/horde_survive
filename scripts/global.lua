@@ -1,6 +1,7 @@
 local global = {}
 
 
-global.debug = true
+global.debug = false
+global.god_mode = false
 
 return global

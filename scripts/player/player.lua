@@ -15,6 +15,7 @@ player.status = {
     speed = 3,
     Character = love.graphics.newImage("images/characters/robert.png"),
     health = 20,
+    max_health = 20,
     scaleX = 2,
     scaleY = 2,
     spawn = false,
@@ -186,7 +187,7 @@ function player.update(dt)
 
         
 
-        if collision.check(collisions.player[1].xbox, collisions.player[1].ybox, collisions.player[1].wbox, collisions.player[1].hbox, collisions.bullets, "enemy") then
+        if collision.check(collisions.player[1].xbox, collisions.player[1].ybox, collisions.player[1].wbox, collisions.player[1].hbox, collisions.bullets, "enemy") and global.god_mode == false and player.status.morto == false then
             local id = collision.check(collisions.player[1].xbox, collisions.player[1].ybox, collisions.player[1].wbox, collisions.player[1].hbox, collisions.bullets, "enemy")[2]
             player.status.health = player.status.health - collisions.bullets[id].damage
         end 
@@ -199,13 +200,21 @@ function player.draw()
     if player.status.spawn == true then
         local pl_x = "Player X: " ..coords.x
         local pl_y = "Player Y: " ..coords.y
-        love.graphics.print(player.status.health, player.coords.x-3, player.coords.y-30)
+
+        -- Basicamente pra criar uma barra de vida
+        -- basta desenhar um quadrado com a largura dependendo da variavel de vida
+        local c = player.status.health/player.status.max_health
+        local cor = {2-2*c,2*c,0}
+        love.graphics.setColor(cor)
+        love.graphics.rectangle('fill', player.coords.x-10, player.coords.y-20, player.status.health, 5)
+        love.graphics.setColor(1,1,1)
+        love.graphics.rectangle('line',player.coords.x-10, player.coords.y-20,player.status.max_health, 5)
+
     
-        --love.graphics.draw(player.status.Character, coords.x, coords.y, 0, 1, 1, player.status.Character:getWidth()/2, player.status.Character:getHeight()/2)
         player_animations.anim:draw(player_sheet, coords.x, coords.y, 0, player.status.scaleX, player.status.scaleY, 24/2, 25/2)
     
-        love.graphics.print(pl_x, 400, 15)
-        love.graphics.print(pl_y, 580, 15)
+        --love.graphics.print(pl_x, 400, 15)
+        --love.graphics.print(pl_y, 580, 15)
 
     end
 end

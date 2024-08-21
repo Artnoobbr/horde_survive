@@ -38,7 +38,7 @@ end
 
 function map.drawmap()
     DebugMap:draw()
-    love.graphics.print("Colisões paredes: "..tools.tablelength(collision.collisions.paredes), 500, 65)
+    --love.graphics.print("Colisões paredes: "..tools.tablelength(collision.collisions.paredes), 500, 65)
     map.active = true
 end
 

@@ -24,7 +24,7 @@ local pontuacao = {
 local textos = {
     principal = {
         titulo = {
-            texto = love.graphics.newText(monogram, "Luagame"),
+            texto = love.graphics.newText(monogram, "Horde Survive"),
             x = width/2,
             y = 120,
             nome = "titulo"
@@ -49,12 +49,32 @@ local textos = {
         }
     },
     creditos = {
-        lorem = {
-            texto = love.graphics.newText(monogram, "Lorem ipsum dolor sit amet "),
+        cainos = {
+            texto = love.graphics.newText(monogram, "Pixel Art Top Down Basic by Cainos"),
             x = width/2,
-            y = height/2,
-            nome = 'lorem'
+            y = 200,
+            nome = 'cainos'
         },
+        monogram = {
+            texto = love.graphics.newText(monogram, "Monogram font by datagoblin"),
+            x = width/2,
+            y = 150,
+            nome = 'monogram'
+        },
+        protagonist = {
+            texto = love.graphics.newText(monogram, "Pixel Protagonist by Penzilla"),
+            x = width/2,
+            y = 100,
+            nome = 'protagonist'
+        },
+        gun_pack = {
+            texto = love.graphics.newText(monogram, "Pixel Art Assets 7 by Greenpixels"),
+            x = width/2,
+            y = 250,
+            nome = 'gun_pack'
+        },
+        
+        
 
         voltar = {
             texto = love.graphics.newText(monogram, "Voltar"),
@@ -86,7 +106,7 @@ local textos = {
     },
     morto = {
         pontuacao = {
-            texto = love.graphics.newText(monogram, "Voce sobreviveu a "..pontuacao.ondas ),
+            texto = love.graphics.newText(monogram, "Voce sobreviveu a "..pontuacao.ondas.. " ondas" ),
             x = width/2,
             y = 220,
             nome = "resumir"
@@ -213,6 +233,11 @@ function menu.pause(type, ondas, mortos)
         text_loc = textos.morto
         pontuacao.ondas = ondas
         pontuacao.inimigos_mortos = mortos
+        if ondas < 2 then
+            textos.morto.pontuacao.texto = love.graphics.newText(monogram, "Voce sobreviveu a "..pontuacao.ondas.. " onda" )
+        else
+            textos.morto.pontuacao.texto = love.graphics.newText(monogram, "Voce sobreviveu a "..pontuacao.ondas.. " ondas" )
+        end
         menu.update()
     else
         menu.deletar_mouse()

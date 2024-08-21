@@ -6,6 +6,7 @@ local points = {}
 local spawn_point = {}
 
 local guns = require("scripts.guns.guns")
+local global = require("scripts.global")
 
 local collision = require("scripts.collision.collision")
 
@@ -19,7 +20,9 @@ local stats = {
     sprite = love.graphics.newImage("images/characters/enemy/gunner.png"),
     gun = love.graphics.newImage("images/guns/pistol/M92.png"),
     bullet = "images/guns/pistol/bullet.png",
+    bala = love.graphics.newImage("images/guns/pistol/PistolAmmoSmall.png"),
     health = 20,
+    sound = love.audio.newSource("sounds/guns/pistol/pistol.wav", "static"),
     damage = 1,
     scaleX = 2,
     scaleY = 2,
@@ -33,6 +36,7 @@ local enemy_grid = anim8.newGrid(24, 25, enemy_sheet:getWidth(), enemy_sheet:get
 function  gunner.create(x, y, vida, velocidade, dano)
     local info = {}
     info.health = vida
+    info.max_health = vida
     info.sprite = stats.sprite
     info.gun = stats.gun
     info.gun_scaleX = 1.2
@@ -123,13 +127,22 @@ end
 
 function gunner.draw()
     for i in pairs(gunners) do
-        local angulo = guns.rotacionar(gunners[i].x, gunners[i].y, true)[1]
+        local angulo = guns.rotacionar(gunners[i].x, gunners[i].y, true, false)[1]
         if gunners[i].health > 0 then
             gunners[i].anim:draw(enemy_sheet, gunners[i].x, gunners[i].y, 0, gunners[i].scaleX,  gunners[i].scaleY, 24/2, 25/2)
-            love.graphics.draw(gunners[i].gun, gunners[i].x, gunners[i].y , angulo, 1, 1, gunners[i].gun:getWidth()/2,  gunners[i].gun:getHeight()/2)
-            love.graphics.print(gunners[i].health, gunners[i].x-3, gunners[i].y-30)
+            love.graphics.draw(gunners[i].gun, gunners[i].x + 2, gunners[i].y + 11 , angulo, gunners[i].gun_scaleX, -gunners[i].gun_scaleY, gunners[i].gun:getWidth()/2,  gunners[i].gun:getHeight()/2)
+            --love.graphics.print(gunners[i].health, gunners[i].x-3, gunners[i].y-30)
+
+            local c = gunners[i].health/gunners[i].max_health
+            local cor = {2-2*c,2*c,0}
+            love.graphics.setColor(cor)
+            love.graphics.rectangle('fill', gunners[i].x-10, gunners[i].y-20, gunners[i].health, 5)
+            love.graphics.setColor(255,0,0)
+            love.graphics.rectangle('line',gunners[i].x-10, gunners[i].y-20, gunners[i].max_health, 5)
+            love.graphics.setColor(1,1,1)
+
         end
-        if gunners[i].andando == true then
+        if gunners[i].andando == true and global.debug == true then
             for x in pairs(points) do
                 if points[x].id == gunners[i].id then
                     point_id = x
@@ -145,8 +158,8 @@ function gunner.draw()
     end
 
 
-    love.graphics.print("Spawns total "..gunner.quantidade_spawns, 520, 95)
-    love.graphics.print("Mortos "..gunner.mortos, 660, 95)
+    --love.graphics.print("Spawns total "..gunner.quantidade_spawns, 520, 95)
+    --love.graphics.print("Mortos "..gunner.mortos, 660, 95)
 
 end
 
@@ -155,7 +168,11 @@ function gunner.update(dt)
     for i, x in pairs(gunners) do
         local angulo = guns.rotacionar(gunners[i].x, gunners[i].y, true)[1]
         local lado = guns.rotacionar(gunners[i].x, gunners[i].y, true)[2]
+        local barrel_point = guns.point(gunners[i].x + 6, gunners[i].y + 7, 10, angulo)
+        local bullet_exit_poit = guns.point(gunners[i].x, gunners[i].y + 6, 0, angulo)
         local id_collision = 0
+
+        gunners[i].gun_scaleY = guns.flipimage(gunners[i].gun_scaleY, true, gunners[i].x, gunners[i].y)
 
         if (angulo > 1.6 or angulo < -1.6) then
             if gunners[i].scaleX > 0 then
@@ -204,6 +221,11 @@ function gunner.update(dt)
                     end
                 end
 
+                if point_id == nil then
+                    print("Point_Id nill error!")
+                    return
+                end
+
                 for muuuu in pairs(collision.collisions.ponto) do
                     if collision.collisions.ponto[muuuu].id == gunners[i].id then
                         collision_id = muuuu
@@ -231,7 +253,9 @@ function gunner.update(dt)
             end
 
             if timer == 0 then
-                guns.bullet_create(gunners[i].x + 20, gunners[i].y + 3, stats.bullet, angulo, gunners[i].damage, "enemy")
+                guns.bullet_create(barrel_point[1], barrel_point[2], stats.bullet, angulo, gunners[i].damage, "enemy")
+                guns.particle(stats.bala, bullet_exit_poit[1], bullet_exit_poit[2], true, gunners[i].gun_scaleY)
+                stats.sound:play()
                 timer = 20
             else
                 timer = timer - 0.5

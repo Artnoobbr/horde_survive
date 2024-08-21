@@ -44,8 +44,8 @@ local timer_reload
 function pistol.draw()
     love.graphics.draw(stats.idle, coords.x + stats.offsetX, coords.y + stats.offsetY, Angulo, stats.scaleX, stats.scaleY, stats.idle:getWidth()/2, stats.idle:getHeight()/2)
 
-    love.graphics.print("Munição Pistola: "..inventario.guns.pistol.municao, 400, 45)
-    love.graphics.print("Pistola Y: "..coords.y + stats.offsetY, 580, 45)
+    --love.graphics.print("Munição Pistola: "..inventario.guns.pistol.municao, 400, 45)
+    --love.graphics.print("Pistola Y: "..coords.y + stats.offsetY, 580, 45)
 end
 
 function pistol.update(dt)
@@ -55,7 +55,7 @@ function pistol.update(dt)
     pistol.exitbullet_point = guns.point(coords.x + stats.offsetX_exit, coords.y + stats.offsetY_exit, 0, Angulo )
 
 
-    stats.scaleY = guns.flipimage(stats.scaleY)
+    stats.scaleY = guns.flipimage(stats.scaleY, false, 0, 0)
 
     if love.keyboard.isDown("r") and inventario.guns.pistol.municao < stats.max_ammo and inventario.guns.pistol.regarregando == false then
         reload:play()

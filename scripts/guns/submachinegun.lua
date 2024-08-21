@@ -35,7 +35,7 @@ local stats = {
 
 function submachinegun.draw()
     love.graphics.draw(stats.idle, coords.x + stats.offsetX, coords.y + stats.offsetY, Angulo, stats.scaleX, stats.scaleY, stats.idle:getWidth()/2, stats.idle:getHeight()/2)
-    love.graphics.print("Munição Submetralhadora: "..inventario.guns.submachinegun.municao, 400, 45)
+    --love.graphics.print("Munição Submetralhadora: "..inventario.guns.submachinegun.municao, 400, 45)
 end
 
 function submachinegun.update(dt)
