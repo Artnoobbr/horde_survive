@@ -173,6 +173,10 @@ function player.update(dt)
             player_animations.anim = player_animations.idle
         end
 
+        if player.status.health < player.status.max_health and player.status.morto == false then
+            player.status.health = player.status.health + 0.01
+        end
+
         if player.status.health <= 0 then
             player.status.morto = true
             player_animations.anim = player_animations.morrendo

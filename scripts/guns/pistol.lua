@@ -18,14 +18,17 @@ coords = {
 pistol.stats_global = {
     bullet = "images/guns/pistol/bullet.png",
     bullet_exit = love.graphics.newImage("images/guns/pistol/PistolAmmoSmall.png"),
-    shoot = love.audio.newSource("sounds/guns/pistol/pistol.wav", "static")
+    shoot = love.audio.newSource("sounds/guns/pistol/pistol.wav", "static"),
+    dano = 1
 }
+
+pistol.stats_global.shoot:setVolume(0.3)
+reload:setVolume(0.5)
 
 local stats = {
     offsetX = 2,
     offsetY = 11,
     idle = love.graphics.newImage("images/guns/pistol/M92.png"),
-    damage = 1,
     max_ammo = 10,
 
 

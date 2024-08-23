@@ -2,6 +2,9 @@ local ondas = {}
 
 local gunners = require("scripts.enemy.gunner")
 local tools   = require("scripts.tools.tools")
+local player  = require("scripts.player.player")
+local pistol  = require("scripts.guns.pistol")
+local submachinegun = require("scripts.guns.submachinegun")
 
 local width = love.graphics.getWidth()
 local height = love.graphics.getHeight()
@@ -26,7 +29,8 @@ local multiplicador = {
     vida_multiplicador = 1,
     velocidade_multiplicador = 1,
     dano_multiplicador = 1,
-    quantidade_multiplicador = 1
+    quantidade_multiplicador = 1,
+    player_dano_multiplicador = 1
 }
 
 ondas.score = {
@@ -46,6 +50,7 @@ function ondas.update(dt)
 
        if gunners.mortos >= onda.quantidade_padrao then
             tempo_texto = 20
+            player.status.health = 20
             onda.onda_atual = onda.onda_atual + 1
             ondas.score.ondas_sobrevividas = ondas.score.ondas_sobrevividas + 1
             print(ondas.score.ondas_sobrevividas)
@@ -55,16 +60,28 @@ function ondas.update(dt)
             gunners.quantidade_spawns = 0
             onda.onda_em_progresso = false
 
-            multiplicador.dano_multiplicador = multiplicador.dano_multiplicador + 0.10
-            multiplicador.quantidade_multiplicador = multiplicador.quantidade_multiplicador + 0.5
-            multiplicador.velocidade_multiplicador = multiplicador.velocidade_multiplicador + 0.1
-            multiplicador.vida_multiplicador = multiplicador.vida_multiplicador + 0.5
+            if onda.onda_atual < 5 then
+                multiplicador.dano_multiplicador = multiplicador.dano_multiplicador + 0.030
+                multiplicador.quantidade_multiplicador = multiplicador.quantidade_multiplicador + 0.090
+                multiplicador.velocidade_multiplicador = multiplicador.velocidade_multiplicador + 0.040
+                multiplicador.vida_multiplicador = multiplicador.vida_multiplicador + 0.095
+                multiplicador.player_dano_multiplicador = multiplicador.player_dano_multiplicador + 0.05
+            else
+                multiplicador.dano_multiplicador = multiplicador.dano_multiplicador + 0.070
+                multiplicador.quantidade_multiplicador = multiplicador.quantidade_multiplicador + 0.090
+                multiplicador.velocidade_multiplicador = multiplicador.velocidade_multiplicador + 0.045
+                multiplicador.vida_multiplicador = multiplicador.vida_multiplicador + 0.12
+                multiplicador.player_dano_multiplicador = multiplicador.player_dano_multiplicador + 0.08
+            end
+
 
             onda.dano_incial = onda.dano_incial * multiplicador.dano_multiplicador
             onda.vida_inicial = onda.vida_inicial * multiplicador.vida_multiplicador
             onda.quantidade_padrao = onda.quantidade_padrao * multiplicador.quantidade_multiplicador
             onda.velocidade_inicial = onda.velocidade_inicial * multiplicador.velocidade_multiplicador
-            
+            pistol.stats_global.dano = pistol.stats_global.dano * multiplicador.player_dano_multiplicador
+            submachinegun.stats_global.dano = submachinegun.stats_global.dano * multiplicador.player_dano_multiplicador
+
        end
     end
 end
@@ -90,6 +107,9 @@ function ondas.reset()
     onda.vida_inicial = 5
     onda.velocidade_inicial = 20
     onda.quantidade_padrao = 5
+
+    pistol.stats_global.dano = 1
+    submachinegun.stats_global.dano = 1
     
     for i in pairs(multiplicador) do
         multiplicador[i] = 1

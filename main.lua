@@ -42,8 +42,12 @@ local width = love.graphics.getWidth()
 local height = love.graphics.getHeight()
 
 love.window.setTitle("Horde Survive")
+local background_music = love.audio.newSource("sounds/background/rose_at_nightfall.mp3", "stream")
+background_music:setVolume(0.2)
+local background_music2 = love.audio.newSource("sounds/background/Daniel_Bautista_Opening_Theme_(Music_for_a Film_).mp3", "stream")
+background_music2:setVolume(0.2)
 
-
+local ignore = false
 
 function love.update(dt)
   mouse.update()
@@ -57,6 +61,7 @@ function love.update(dt)
       gunner.unload()
       player.reset()
       inventario.reset()
+      love.audio.stop()
   end
 
   if map.loaded == false and menu.main_menu == false then
@@ -77,10 +82,28 @@ function love.update(dt)
           player.spawn(width/2, height/2)
       end
 
+      if menu.pausado == true then
+        background_music:pause()
+        background_music2:pause()
+      end
+
       if menu.pausado == false then
 
         if tools.tablelength(collision.collisions.gunners) > 0 then
           gunner.update(dt)
+        end
+
+
+        if not background_music:isPlaying() and not background_music2:isPlaying() then
+          local random = math.random(1, 2)
+
+          if random == 1 then
+            background_music:play()
+          else
+            background_music2:play()
+          end
+          --background_music:play()
+          --background_music:setLooping(true)
         end
         
         gunner.spawn_update()

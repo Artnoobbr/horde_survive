@@ -27,6 +27,9 @@ local stats = {
     scaleX = 2,
     scaleY = 2,
 }
+
+stats.sound:setVolume(0.3)
+
 gunner.quantidade_spawns = 0
 gunner.mortos = 0
 
@@ -109,7 +112,7 @@ local function create_point(enemy_x, enemy_y, id, random, width, height)
     end
 
     if collision.check(collision_location[collision_id].xbox, collision_location[collision_id].ybox, collision_location[collision_id].wbox, collision_location[collision_id].hbox, collision.collisions.paredes) then
-        print("invalid")
+        --print("invalid")
         table.remove(collision_location, collision_id)
         return
     end
@@ -222,7 +225,7 @@ function gunner.update(dt)
                 end
 
                 if point_id == nil then
-                    print("Point_Id nill error!")
+                    --print("Point_Id nill error!")
                     return
                 end
 
@@ -311,7 +314,7 @@ end
 
 
 
-local cooldown_spawn = 20
+local cooldown_spawn = 15
 
 
 function gunner.random_create(velocidade, vida, dano)
@@ -329,7 +332,7 @@ function gunner.random_create(velocidade, vida, dano)
     local timer_before_spawn = 10
     for i in pairs(spawn_point) do
         if spawn_point[i].id == id then
-            print("Point is valid!")
+            --print("Point is valid!")
             spawn_point[i].found_point = true
             spawn_point_id = i
         end
@@ -341,7 +344,7 @@ function gunner.random_create(velocidade, vida, dano)
             table.remove(spawn_point, spawn_point_id)
             gunner.quantidade_spawns = gunner.quantidade_spawns + 1
             
-            cooldown_spawn = 20
+            cooldown_spawn = 15
         end
     end
 end
