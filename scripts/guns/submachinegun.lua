@@ -16,7 +16,6 @@ submachinegun.stats_global = {
 }
 
 local shoot = love.audio.newSource("sounds/guns/pistol/pistol.wav", "static")
-local reload = love.audio.newSource("sounds/guns/submachinegun/submachinegun_reload.wav", "static")
 
 local timer = 0
 
@@ -52,23 +51,12 @@ function submachinegun.update(dt)
     local barrel_point = guns.point(coords.x + stats.offset_barrelX, coords.y + stats.offset_barrelY, 10, Angulo)
     local exit_point = guns.point(coords.x + stats.offset_exitX, coords.y + stats.offset_exitY, 0, Angulo)
 
-    if love.mouse.isDown(1) and timer <= 0  and inventario.guns.submachinegun.municao > 0 and inventario.guns.submachinegun.equipado == true then
+    if love.mouse.isDown(1) and timer <= 0  and inventario.guns.submachinegun.municao > 0 and inventario.guns.submachinegun.equipado == true and inventario.guns.submachinegun.regarregando == false then
         shoot:play()
         guns.bullet_create(barrel_point[1], barrel_point[2], stats.bullet, guns.rotacionar(coords.x, coords.y)[1], submachinegun.stats_global.dano, "player")
         guns.particle(stats.bullet_exit, exit_point[1], exit_point[2])
         inventario.guns.submachinegun.municao = inventario.guns.submachinegun.municao - 1
         timer = 0.32
-    end
-
-    if love.keyboard.isDown("r") and inventario.guns.submachinegun.municao < stats.max_ammo and inventario.guns.pistol.regarregando == false then
-        timer = 3.0
-        inventario.guns.submachinegun.regarregando = true
-        reload:play()
-    end
-
-    if inventario.guns.submachinegun.regarregando == true and timer <= 0 then
-        guns.reload(inventario.guns.submachinegun, stats.max_ammo)
-        inventario.guns.submachinegun.regarregando = false
     end
 
     if timer > 0 then

@@ -41,7 +41,7 @@ function dummy.draw()
     for i in pairs(dummys) do
         if dummys[i].health > 0 then
             love.graphics.draw(dummys[i].sprite, dummys[i].x, dummys[i].y, dummys[i].rotation, 1, 1, dummys[i].sprite:getWidth()/2,  dummys[i].sprite:getHeight()/2)
-            love.graphics.print(dummys[i].health, dummys[i].x-3, dummys[i].y-30)
+            --love.graphics.print(dummys[i].health, dummys[i].x-3, dummys[i].y-30)
         end
     end
 end

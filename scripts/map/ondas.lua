@@ -5,6 +5,7 @@ local tools   = require("scripts.tools.tools")
 local player  = require("scripts.player.player")
 local pistol  = require("scripts.guns.pistol")
 local submachinegun = require("scripts.guns.submachinegun")
+local data = require("scripts.data.data")
 
 local width = love.graphics.getWidth()
 local height = love.graphics.getHeight()
@@ -50,10 +51,9 @@ function ondas.update(dt)
 
        if gunners.mortos >= onda.quantidade_padrao then
             tempo_texto = 20
-            player.status.health = 20
+            player.status.health = player.status.max_health
             onda.onda_atual = onda.onda_atual + 1
             ondas.score.ondas_sobrevividas = ondas.score.ondas_sobrevividas + 1
-            print(ondas.score.ondas_sobrevividas)
             ondas.score.inimigos_mortos = ondas.score.inimigos_mortos + gunners.mortos
             status.matou = gunners.mortos
             gunners.mortos = 0
@@ -83,6 +83,15 @@ function ondas.update(dt)
             submachinegun.stats_global.dano = submachinegun.stats_global.dano * multiplicador.player_dano_multiplicador
 
        end
+
+       if player.status.morto == true then
+            if ondas.score.ondas_sobrevividas > data['user']['pontuacao']['ondas'] then
+                data['user']['pontuacao']['ondas'] = ondas.score.ondas_sobrevividas
+            end
+
+            data.fileupdate()
+       end
+
     end
 end
 

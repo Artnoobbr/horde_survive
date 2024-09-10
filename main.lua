@@ -5,6 +5,7 @@ local player = require "scripts.player.player"
 local inventario = require("scripts.player.inventario")
 local teclado = require("scripts.player.teclado")
 local mouse = require("scripts.player.mouse")
+local sound = require("scripts.sound.sound")
 
 local tools      = require("scripts.tools.tools")
 
@@ -38,14 +39,14 @@ local collision = require("scripts.collision.collision")
 
 local global = require("scripts.global")
 
+local sounds = require("scripts.sound.sound")
+
+local data = require("scripts.data.data")
+
 local width = love.graphics.getWidth()
 local height = love.graphics.getHeight()
 
 love.window.setTitle("Horde Survive")
-local background_music = love.audio.newSource("sounds/background/rose_at_nightfall.mp3", "stream")
-background_music:setVolume(0.2)
-local background_music2 = love.audio.newSource("sounds/background/Daniel_Bautista_Opening_Theme_(Music_for_a Film_).mp3", "stream")
-background_music2:setVolume(0.2)
 
 local ignore = false
 
@@ -61,7 +62,7 @@ function love.update(dt)
       gunner.unload()
       player.reset()
       inventario.reset()
-      love.audio.stop()
+      sounds.reset()
   end
 
   if map.loaded == false and menu.main_menu == false then
@@ -82,36 +83,19 @@ function love.update(dt)
           player.spawn(width/2, height/2)
       end
 
-      if menu.pausado == true then
-        background_music:pause()
-        background_music2:pause()
-      end
-
       if menu.pausado == false then
 
         if tools.tablelength(collision.collisions.gunners) > 0 then
           gunner.update(dt)
         end
-
-
-        if not background_music:isPlaying() and not background_music2:isPlaying() then
-          local random = math.random(1, 2)
-
-          if random == 1 then
-            background_music:play()
-          else
-            background_music2:play()
-          end
-          --background_music:play()
-          --background_music:setLooping(true)
-        end
         
         gunner.spawn_update()
         guns.bullet_update(dt)
         guns.particle_update()
+        guns.reload_update(dt,inventario.location)
         player.update(dt)
         ondas.update(dt)
-
+        ondas.update(dt)
         if player.status.spawn == true and player.status.morto == false then
           if inventario.guns.pistol.equipado == true then
             pistol.update(dt)
@@ -120,10 +104,10 @@ function love.update(dt)
           end
         end
       end
+      sounds.update(dt)
   end
 
 end
-
 
 function love.draw()
     
@@ -134,16 +118,12 @@ function love.draw()
   if map.loaded == true and menu.main_menu == false then
       map.drawmap()
   end
-
-
   if map.active == true then
       guns.particle_draw()
       player.draw()
       inventario.draw()
 
-      if menu.pausado == true then
-        menu.draw()
-      end
+
 
       if tools.tablelength(collision.collisions.gunners) > 0 then
         gunner.draw()
@@ -161,6 +141,11 @@ function love.draw()
       
       ondas.draw()
       guns.bullet_draw()
+      guns.reload_draw(inventario.location)
+
+      if menu.pausado == true then
+        menu.draw()
+      end
   end
 
   if global.debug == true then

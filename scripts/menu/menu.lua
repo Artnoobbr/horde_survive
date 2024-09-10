@@ -2,24 +2,32 @@ local menu = {}
 
 local collision = require("scripts.collision.collision")
 
-menu.main_menu = true
-
-local monogram = love.graphics.newFont("fonts/monogram/ttf/monogram.ttf", 50)
-
 local tools = require("scripts.tools.tools")
 
-local width = love.graphics.getWidth()
-local height = love.graphics.getHeight()
+local simple_slider = require("lib.simple-slider.simple-slider")
+
+local data = require("scripts.data.data")
+
+menu.main_menu = true
 
 local mouse = {
     x = 0,
     y = 0
 }
 
+local width = love.graphics.getWidth()
+local height = love.graphics.getHeight()
+
+local monogram = love.graphics.newFont("fonts/monogram/ttf/monogram.ttf", 50)
+
 local pontuacao = {
-   ondas = 0,
-   inimigos_mortos = 0
-}
+    ondas = 0,
+    inimigos_mortos = 0
+ }
+
+menu.menu_loc = "principal"
+menu.pausado = false
+menu.slider = false
 
 local textos = {
     principal = {
@@ -33,19 +41,41 @@ local textos = {
             texto = love.graphics.newText(monogram, "Jogar"),
             x = width/2,
             y = 220,
-            nome = "jogar"
+            nome = "jogar",
+            acao = function ()
+                menu.deletar_texto()
+                menu.deletar_mouse()
+                menu.main_menu = false
+            end
         },
-        sair = {
-            texto = love.graphics.newText(monogram, "Sair"),
+        configuracoes = {
+            texto = love.graphics.newText(monogram, "Configuracoes"),
             x = width/2,
-            y = 420,
-            nome = "sair"
+            y = 320,
+            nome = "configuracoes",
+            acao = function ()
+                menu.menu_loc = "configuracoes"
+                carregar()
+            end
         },
         creditos = {
             texto = love.graphics.newText(monogram, "Creditos"),
             x = width/2,
-            y = 320,
-            nome = "creditos"
+            y = 420,
+            nome = "creditos",
+            acao = function ()
+                menu.menu_loc = "creditos"
+                carregar()
+            end
+        },
+        sair = {
+            texto = love.graphics.newText(monogram, "Sair"),
+            x = width/2,
+            y = 520,
+            nome = "sair",
+            acao = function ()
+                love.event.quit()
+            end
         }
     },
     creditos = {
@@ -73,64 +103,121 @@ local textos = {
             y = 250,
             nome = 'gun_pack'
         },
-        
-        
-
         voltar = {
             texto = love.graphics.newText(monogram, "Voltar"),
             x = width/2,
             y = 550,
-            nome = 'voltar'
+            nome = 'voltar',
+            acao = function ()
+                menu.menu_loc = "principal"
+                carregar()
+            end
         }
 
+    },
+    configuracoes = {
+        volume = {
+            texto = love.graphics.newText(monogram, "Volume Musica"),
+            x = width/2,
+            y = 250,
+            slider = newSlider(width/2, 300, 200, data['user']['config']['volume'], 0, 1, function(v) data['user']['config']['volume'] = v end)
+        },
+        voltar = {
+            texto = love.graphics.newText(monogram, "Voltar"),
+            x = width/2,
+            y = 550,
+            nome = 'voltar',
+            acao = function ()
+                if menu.pausado == false then
+                    menu.menu_loc = "principal"
+                    data.fileupdate()
+                    carregar()
+                else
+                    menu.menu_loc = 'pause'
+                    data.fileupdate()
+                    carregar()
+                end
+            end
+        }
     },
     pause = {
         sair = {
             texto = love.graphics.newText(monogram, "Sair"),
             x = width/2,
             y = 420,
-            nome = "sair"
+            nome = "sair",
+            acao = function ()
+                love.event.quit()
+            end
         },
         resumir = {
             texto = love.graphics.newText(monogram, "Resumir"),
             x = width/2,
             y = 220,
-            nome = "resumir"
+            nome = "resumir",
+            acao = function ()
+                menu.pausado = false
+            end
         },
         menu = {
             texto = love.graphics.newText(monogram, "menu"),
             x = width/2,
             y = 320,
-            nome = "menu"
-        }
+            nome = "menu",
+            acao = function ()
+                menu.pausado = false
+                menu.main_menu = true
+                menu.menu_loc = 'principal'
+                collision.reset()
+                menu.criar_mouse()
+                carregar()
+            end
+        },
+        configuracoes = {
+            texto = love.graphics.newText(monogram, "Configuracoes"),
+            x = width/2,
+            y = 520,
+            nome = "configuracoes",
+            acao = function ()
+                menu.menu_loc = 'configuracoes'
+                carregar()
+            end
+        },
     },
     morto = {
         pontuacao = {
             texto = love.graphics.newText(monogram, "Voce sobreviveu a "..pontuacao.ondas.. " ondas" ),
             x = width/2,
             y = 220,
-            nome = "resumir"
+            nome = "pontuacao",
         },
         menu = {
             texto = love.graphics.newText(monogram, "menu"),
             x = width/2,
             y = 320,
-            nome = "menu"
+            nome = "menu",
+            acao = function()
+                menu.pausado = false
+                menu.main_menu = true
+                menu.menu_loc = 'principal'
+                collision.reset()
+                menu.criar_mouse()
+                carregar()
+            end
         },
         sair = {
             texto = love.graphics.newText(monogram, "Sair do jogo"),
             x = width/2,
             y = 420,
-            nome = "sair"
+            nome = "sair",
+            acao = function ()
+                love.event.quit()
+            end
         }
     }
 }
 
-local menu_loc = "principal"
 local text_loc = textos.principal
-menu.pausado = false
-
-
 
 function menu.criar_mouse()
     collision.create(mouse.x, mouse.y, 5, 5, 255, 255, 255, "mouse", 0, false, collision.collisions.mouse)
@@ -154,56 +241,63 @@ function menu.deletar_texto()
     end
 end
 
-local function acao_btn(name)
-    if name == "sair" then
-        love.event.quit()
-    elseif name == "jogar" then
-        menu.deletar_texto()
-        menu.deletar_mouse()
-        menu.main_menu = false
-    elseif name == "creditos" then
-        menu_loc = "creditos"
-        carregar()
-    elseif name == "voltar" then
-        menu_loc = "principal"
-        carregar()
-    elseif name == "resumir" then
-        menu.pausado = false
-    elseif name == "menu" then
-        menu.pausado = false
-        menu.main_menu = true
-        collision.reset()
-        menu.criar_mouse()
-        carregar()
-    end
-end
-
 
 local function adicionar_texto(localizacao)
     for i in pairs(localizacao) do
-        collision.create(localizacao[i].x, localizacao[i].y, localizacao[i].texto:getHeight(), localizacao[i].texto:getWidth(), 255, 255, 255, localizacao[i].nome, 0, false, collision.collisions.textos)
+        if localizacao[i].texto ~= nil then
+           collision.create(localizacao[i].x, localizacao[i].y, localizacao[i].texto:getHeight(), localizacao[i].texto:getWidth(), 255, 255, 255, localizacao[i].nome, 0, false, collision.collisions.textos) 
+        end
     end
 end
 
 
 function carregar()
     menu.deletar_texto()
-    if menu_loc == "principal" then
-        adicionar_texto(textos.principal)
-        text_loc = textos.principal
-    elseif menu_loc == "creditos" then
-        adicionar_texto(textos.creditos)
-        text_loc = textos.creditos
+    menu.slider = false
+
+    if menu.pausado == false then
+        if menu.menu_loc == "principal" then
+            adicionar_texto(textos.principal)
+            text_loc = textos.principal
+        elseif menu.menu_loc == "creditos" then
+            adicionar_texto(textos.creditos)
+            text_loc = textos.creditos
+        elseif menu.menu_loc == "configuracoes" then
+            adicionar_texto(textos.configuracoes)
+            text_loc = textos.configuracoes
+            menu.slider = true
+        end
+    else
+        if menu.menu_loc == 'pause' then
+            adicionar_texto(textos.pause)
+            text_loc = textos.pause
+        elseif menu.menu_loc == 'configuracoes' then
+            adicionar_texto(textos.configuracoes)
+            text_loc = textos.configuracoes
+            menu.slider = true
+        end
     end
+
 end
 
 function menu.draw()
     local height = love.graphics.getHeight()
-    love.graphics.setBackgroundColor(0, 0, 255)
+    love.graphics.setBackgroundColor(0, 0,255)
 
+    
     for i in pairs(text_loc) do
-        love.graphics.draw(text_loc[i].texto, text_loc[i].x, text_loc[i].y, 0, 1, 1, text_loc[i].texto:getWidth()/2, text_loc[i].texto:getHeight()/2)
+        -- Renderizar o textos
+        if text_loc[i].texto ~= nil then
+            love.graphics.draw(text_loc[i].texto, text_loc[i].x, text_loc[i].y, 0, 1, 1, text_loc[i].texto:getWidth()/2, text_loc[i].texto:getHeight()/2)
+        end
+
+        -- Renderizar os sliders
+        if text_loc[i].slider ~= nil then
+            text_loc[i].slider:draw()
+        end
     end
+
+
 end
 
 function menu.update()
@@ -214,20 +308,36 @@ function menu.update()
         if button == 1 and (menu.main_menu == true or menu.pausado == true) then          
             if collision.check(collision.collisions.mouse[1].xbox, collision.collisions.mouse[1].ybox, collision.collisions.mouse[1].wbox, collision.collisions.mouse[1].hbox, collision.collisions.textos) then
                 local id = collision.check(collision.collisions.mouse[1].xbox, collision.collisions.mouse[1].ybox, collision.collisions.mouse[1].wbox, collision.collisions.mouse[1].hbox, collision.collisions.textos)[2]
-                acao_btn(collision.collisions.textos[id].name)
+                local name = collision.collisions.textos[id].name
+                if text_loc[name]['acao'] ~= nil then
+                    text_loc[name]['acao']()
+                end
+                
             end
         end
     end
+
+    if menu.slider == true then
+        for i in pairs(text_loc) do
+            if text_loc[i].slider ~= nil then
+                text_loc[i].slider:update()
+                --print(text_loc[i].slider:getValue())
+            end
+        end
+
+    end
+
 end
 
 function menu.pause(type, ondas, mortos)
     if menu.pausado == true and type == 'esc' then
+        love.graphics.setBackgroundColor(0, 0, 255)
         menu.criar_mouse()
-        adicionar_texto(textos.pause)
-        text_loc = textos.pause
+        carregar()
         menu.update()
     
     elseif menu.pausado == true and type == 'player' then
+        love.graphics.setBackgroundColor(0, 0, 255)
         menu.criar_mouse()
         adicionar_texto(textos.morto)
         text_loc = textos.morto

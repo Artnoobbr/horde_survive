@@ -67,10 +67,8 @@ function guns.flipimage(scaleXorY, enemy, enemy_x, enemy_y)
     
     if lado == "esquerda" and scaleXorY > 0 then
         scaleXorY = -(scaleXorY)
-        player.status.scaleX = -(player.status.scaleX)
     elseif lado == "direita" and scaleXorY < 0 then
         scaleXorY = -(scaleXorY)
-        player.status.scaleX = -(player.status.scaleX)
     end
 
     return scaleXorY
@@ -160,9 +158,9 @@ function guns.bullet_update(dt)
             bullets[i].x = bullets[i].x + direction.x * dt
             bullets[i].y = bullets[i].y + direction.y * dt
         else
-            if bullets[i].timer == 0 then
-                print("Times over")
-            end
+            --if bullets[i].timer == 0 then
+              --  print("Times over")
+            --end
             bullets[i].selfdestruct()
             table.remove(bullets, i)
             table.remove(collisions.bullets, Co_id)
@@ -192,13 +190,35 @@ function guns.particle_update()
 end
 end
 
-function guns.reload(gun_location, max_ammo, duration)
-    gun_location.regarregando = true
-    local falta = max_ammo - gun_location.municao
+function guns.reload_update(dt, gun_location)
+    if gun_location.regarregando == true then
+        gun_location.som:play()
+        if gun_location.tempo_regarregar > 0 and gun_location.regarregando == true then
+            gun_location.tempo_regarregar = gun_location.tempo_regarregar - dt
+        end
 
-    gun_location.municao = gun_location.municao + falta
+        if gun_location.tempo_regarregar <= 0 then
+            local falta = gun_location.max_municao - gun_location.municao
+            gun_location.municao = gun_location.municao + falta
+            gun_location.tempo_regarregar = gun_location.tempo_max
+            gun_location.regarregando = false
+        end
+    end
 
-    gun_location.regarregando = false
+
+end
+
+function guns.reload_draw(gun_location)
+    if gun_location.regarregando == true then
+        local x_offset = 10
+        local y_offset = 30
+        love.graphics.setColor(0,0,0, 0.15)
+        love.graphics.rectangle('fill',player.coords.x-x_offset, player.coords.y-y_offset, gun_location.multiplicador*gun_location.tempo_max, 5)
+        love.graphics.setColor(255, 255,255)
+        love.graphics.rectangle('fill', player.coords.x-x_offset, player.coords.y-y_offset, gun_location.multiplicador*gun_location.tempo_regarregar, 5)
+        love.graphics.setColor(255, 255,255)
+    end
+    
 end
 
 

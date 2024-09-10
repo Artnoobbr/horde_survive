@@ -6,8 +6,6 @@ local guns = require("scripts.guns.guns")
 
 local inventario = require("scripts.player.inventario")
 
-local reload = love.audio.newSource("sounds/guns/pistol/pistolreload.mp3", "static")
-
 local width, height = love.graphics.getDimensions()
 
 coords = {
@@ -23,7 +21,6 @@ pistol.stats_global = {
 }
 
 pistol.stats_global.shoot:setVolume(0.3)
-reload:setVolume(0.5)
 
 local stats = {
     offsetX = 2,
@@ -59,17 +56,6 @@ function pistol.update(dt)
 
 
     stats.scaleY = guns.flipimage(stats.scaleY, false, 0, 0)
-
-    if love.keyboard.isDown("r") and inventario.guns.pistol.municao < stats.max_ammo and inventario.guns.pistol.regarregando == false then
-        reload:play()
-        pistol.timer = 2.5
-        inventario.guns.pistol.regarregando = true
-    end
-
-    if inventario.guns.pistol.regarregando == true and pistol.timer <= 0 then
-        guns.reload(inventario.guns.pistol, stats.max_ammo)
-        inventario.guns.pistol.regarregando = false
-    end
 
     if pistol.timer > 0 then
         pistol.timer = pistol.timer - dt
