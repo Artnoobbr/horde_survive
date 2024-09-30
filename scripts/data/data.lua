@@ -21,6 +21,8 @@ function data.load()
     local user_file = io.open(user_path, "r")
     local user_content = ""
 
+    print(user_file)
+
     if user_file == nil then
         local default_content = json.encode(default)
 
@@ -29,7 +31,7 @@ function data.load()
         if user_file == nil then
             print('Não foi possível criar user.json')
         else
-            user_file:write(default_content)
+            user_file:write(base64.encode(default_content))
             user_file:close()
         end
         user_file = io.open(user_path, 'r')
@@ -37,7 +39,7 @@ function data.load()
         user_content = user_file:read("a")
         user_file:close()
 
-        user_content = json.decode(user_content)
+        user_content = json.decode(base64.decode(user_content))
         data['user'] = user_content
 
     else
